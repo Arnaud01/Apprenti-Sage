@@ -1,0 +1,638 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Conjuguer au présent</title>
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="conjugaison.css" />
+	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+
+
+
+<nav>
+<ul>
+	<li><a href="lecture-mots.html">Lecture</a>
+		<ul>
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee-mots.html">Dictée</a>
+		<ul>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li class="actuel"><a href="conjugaison.html">Conjugaison</a>
+		<ul>
+			<li><a href="conjugaison.html">Présent</a></li>
+			<li><a href="futur.html">Futur</a></li>
+			<li><a href="imparfait.html">Imparfait</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li><li><a href="multiplications.html">Multiplications</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+<section id="centrale">
+<header>
+
+
+
+	<div id="consigne">Clique sur un verbe dans le menu.</div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+	<section id="contenu-gauche">
+
+	</section>
+
+<section id="contenu-droit"></section>
+
+
+
+
+</section>
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+<script type="text/javascript" src="js/jquery.color.js"></script>   
+<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+<script type="text/javascript" src="js/jquery.json.js"></script>
+<script type="text/javascript">
+
+
+
+$(function(){ // début jquery
+
+
+
+
+// déclaration de variables globales
+
+
+var notesConjugaison;
+
+var notesConjugaisonEncodeesEnJSON;
+
+var j;
+
+var l;
+
+var score;
+
+var numeroDuVerbe;
+
+var pronom;
+
+var pronomsPersonnels = ["je","tu","il/elle/on","nous","vous","ils/elles"];
+
+var erreurs = [false,false,false,false,false,false];
+
+var nb_erreurs;
+
+var s;
+
+var motAEcrire;
+
+var verbe;
+
+var message;
+
+var note;
+
+var couleur;
+
+var audio;
+
+var hautparleur;
+
+var prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+
+
+
+var verbes = [	 // ouverture niveau 0
+			[				 // ouverture niveau 1
+
+				"chanter",
+				false,
+				  ["chante","chantes","chante","chantons","chantez","chantent"],  // niveau 2
+				"chanter",
+				false
+			],				// fermeture niveau 1	
+			[				 // ouverture niveau 1
+
+				"finir",
+				false,
+				  ["finis","finis","finit","finissons","finissez","finissent"],  // niveau 2
+				"finir",
+				true
+			],				// fermeture niveau 1	
+			
+			[				 // ouverture niveau 1
+
+				"être",
+				false,
+				 ["suis","es","est","sommes","êtes","sont"],	 // niveau 2
+				"etre",
+				true
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"avoir",
+				true,
+				  ["ai","as","a","avons","avez","ont"],	 // niveau 2
+				"avoir",
+				true
+			],				// fermeture niveau 1
+	
+
+
+			[ 
+				"faire",
+				false,
+				["fais","fais","fait","faisons","faites","font"],
+				"faire",
+				true
+			],
+			
+			[
+
+				"dire",
+				false,
+				["dis","dis","dit","disons","dites","disent"],
+				"dire",
+				true
+			],
+			
+			[	
+				"aller",
+				false,
+				["vais","vas","va","allons","allez","vont"],
+				"aller",
+				true
+			],
+			
+			[
+
+				"venir",
+				false,
+				["viens","viens","vient","venons","venez","viennent"],
+				"venir",
+				false
+			]
+							
+];	// fermeture niveau 0	
+
+
+/* _________________________________________ mode test _______________________________ */
+
+
+
+
+function afficheMenuTest() {
+
+	$("#contenu-gauche").html('');
+
+	$("#feedback").html('');
+
+	$("#consigne").html('Clique sur un verbe dans le menu.');
+
+	$("#mode").html('');
+
+	$("#mode").html('<p>&gt; Test</p><p><a href="#" class="apprentissage">&gt; Apprentissage</a></p>');
+
+	$('#menu').html('<caption id="caption">Verbes</caption>');
+
+
+if ($.cookie('notesConjugaison') != null) { // si le cookie notesConjugaison existe
+	
+	 notesConjugaison = $.cookie('notesConjugaison');
+	notesConjugaison = $.evalJSON( notesConjugaison );
+}
+else {
+	 notesConjugaison = [
+			
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null]
+		];
+}
+
+
+	for (var i = 0; i < verbes.length; i++) {
+
+		if (notesConjugaison[i][0] == null) {
+			notes = '';
+			couleur = '';
+		}
+		else {
+			notes = notesConjugaison[i][0] + '/10';
+			couleur = notesConjugaison[i][1];
+		}	
+
+		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">' + verbes[i][0] + '</a></td><td class="note ' + couleur + '">' + notes + '</td></tr>');
+	}
+
+	$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+		j = 0;	
+		numeroDuVerbe = $(this).attr("rel");
+		nb_items = 6;
+		decideTest();
+	});
+
+
+	$(".apprentissage").click(function(event) { // écoute l'événement click sur le lien apprentissage et déclenche la fonction;
+		afficheMenuApprentissage();
+	});
+
+}
+
+
+function decideTest() {
+	if (j == 0) { 		// on vient de cliquer sur une série : initialisation de la série
+
+		$("#feedback").html('');
+		
+		verbe = verbes[numeroDuVerbe][0];
+		
+		motAEcrire = verbes[numeroDuVerbe][2][j];
+
+		score = 0;
+
+		afficheContenantTest();
+	}
+	else if (j == nb_items) { 	// dernier item de la série
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+		
+		$("#consigne").html('');
+	
+		nb_erreurs = 6 - score;	
+
+		s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+		if (score == 6) { message = 'Très bien !'; note = 10; couleur = 'vert'; }
+		else if (score == 5) { message = 'Bien'; note = 8; couleur = 'jaune'; }
+		else if (score == 4) { message = 'Bien'; note = 7; couleur = 'jaune'; }
+		else if (score == 3) { message = 'Moyen'; note = 5; couleur = 'orange'; }
+		else if (score == 2) { message = 'Moyen'; note = 3; couleur = 'orange'; }
+		else if (score == 1) { message = 'Insuffisant'; note = 2; couleur = 'rouge'; }
+		else { message = 'Insuffisant'; note = 0; couleur = 'rouge'; }
+
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour conjuguer le verbe ' + verbe + '. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + couleur + '.png" alt="" /></span>');
+		
+		$(".bilan").animate({ backgroundColor:"aqua" }, 500);
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+		
+		$("#lien").html('');
+
+		if (notesConjugaison[numeroDuVerbe][0] == null || notesConjugaison[numeroDuVerbe][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+			notesConjugaison[numeroDuVerbe][0] = note;
+			notesConjugaison[numeroDuVerbe][1] = couleur;
+
+			notesConjugaisonEncodeesEnJSON = $.toJSON( notesConjugaison ); // encodage en JSON du tableau de notes
+
+			$.cookie('notesConjugaison', notesConjugaisonEncodeesEnJSON); // on écrit le cookie avec la meilleure note
+
+						// mise à jour de la note
+
+			n = note + '/10';
+
+
+			$(".note").eq(''+numeroDuVerbe+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+couleur+'');
+
+
+		}
+	
+	}
+	else {		// entre les deux
+		motAEcrire = verbes[numeroDuVerbe][2][j];
+		afficheContenantTest();
+	}	
+
+
+}
+
+function afficheContenantTest() {
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#consigne").html('');
+
+	$("#feedback").css('display:none');
+
+	$("#lien").html('');
+	
+	$("#consigne").html('Conjugue le verbe <strong class="conjugue">' + verbe + '</strong> au présent.');
+
+	pronom = pronomsPersonnels[j];
+
+	if (verbes[numeroDuVerbe][1] && j==0) { pronom = "j'";} // si verbes... = true et si 1ère pers sing
+	
+	$("#contenu-gauche").append('<form id="formulaire" autocomplete="off"><p class="conjugue" rel="' + verbes[numeroDuVerbe][2][j] + '">' + pronom + ' <input type="text" id="motEcrit" name="motEcrit" size="6" maxlength="10" /><input id="soumettre" type="submit" value="OK" /><span class="message"></span></p></form>');
+	$('#motEcrit').focus();	
+
+	j++;
+
+	$('#formulaire').submit(function() {
+
+		motEcrit = $('#motEcrit').val();
+
+		if (motEcrit == motAEcrire) {	
+		
+			score++ ;
+			$("#feedback").html('');
+			$("#feedback").html('<span class="reussi">Tu as réussi !</span>');
+			$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+			decideTest();
+		
+		 }
+		else {
+			$("#feedback").html('');
+			$("#feedback").html('Tu as fait une erreur. Tu as écrit &nbsp;&nbsp;' + pronom + '<span class="erreur">' + motEcrit + '</span> Tu devais écrire &nbsp;&nbsp; '+ pronom +'<span class="juste">' + motAEcrire + '</span>');
+			$("#lien").html('<a href="#" class="suite">Suite</a>');
+			
+			$(".suite").focus();
+
+			$(".suite").click(function(event) {		// écoute l'événement click sur le lien recommence;
+				$("#feedback").html('');
+				decideTest();
+			});
+
+			$("#contenu-gauche").html('');
+		}
+
+	//	alert('motEcrit : ' + motEcrit + ' mot à écrire : ' + motAEcrire + ' score : ' + score);
+		
+
+		return false;
+	});
+
+
+}
+
+
+
+/* _________________________________________ mode apprentissage _______________________________ */
+
+
+
+
+function afficheMenuApprentissage() {
+
+	$("#contenu-gauche").html('');
+	
+	$("#feedback").html('');
+	
+	$("#lien").html('');
+
+	$("#consigne").html('Clique sur un verbe dans le menu.');
+
+	$("#mode").html('');
+
+	$("#mode").html('<p><a href="#" class="test">&gt; Test</a></p><p>&gt; Apprentissage</p>');
+
+	$('#menu').html('<caption id="caption">Verbes</caption>');
+
+	for (var i = 0; i < verbes.length; i++) {
+
+		notes = '';
+		couleur = '';	
+	
+$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">' + verbes[i][0] + '</a></td></tr>');
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;	
+//	$("#feedback").html('');
+	numeroDuVerbe = $(this).attr("rel");
+	nb_items = 6;
+	decideApprentissage();
+});
+
+
+$(".test").click(function(event) { // écoute l'événement click sur le lien apprentissage et déclenche afficheMenuApprentissage();
+	afficheMenuTest();
+});
+
+
+
+}
+
+
+function decideApprentissage() {
+	if (j == 0) { 		// on vient de cliquer sur une série : initialisation de la série
+
+		verbe = verbes[numeroDuVerbe][0];
+
+		j++;
+		
+		nb_essais = 0;
+
+		afficheContenantApprentissage();
+	}
+	else if (j > nb_items) { 	// dernier item de la série
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+		
+		nb_erreurs = nb_essais - nb_items;
+
+		s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+		if (nb_essais == nb_items) { message = 'Très bien !'; note = 10; image = 'vert'; }
+		else if (nb_essais <= 1.25 * nb_items) { message = 'Très bien !'; note = 9; image = 'vert'; }
+		else if (nb_essais <= 1.5 * nb_items) { message = 'Très bien !'; note = 8; image = 'vert'; }
+		else if (nb_essais <= 1.75 * nb_items) { message = 'Bien'; note = 7; image = 'jaune'; }
+		else if (nb_essais <= 2 * nb_items) { message = 'Bien'; note = 6; image = 'jaune'; }
+		else if (nb_essais <= 2.25 * nb_items) { message = 'Bien'; note = 5; image = 'jaune'; }
+		else if (nb_essais <= 2.5 * nb_items) { message = 'Moyen'; note = 4; image = 'orange'; }
+		else if (nb_essais <= 2.75 * nb_items) { message = 'Moyen'; note = 3; image = 'orange'; }
+		else if (nb_essais <= 3 * nb_items) { message = 'Insuffisant'; note = 2; image = 'rouge'; }
+		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
+		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
+
+		$("#feedback").html('<span>Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' syllabes de la série. ' + message + ' ' + note + '/10 </span><img id="couleur" src="images/' + image + '.png" alt="" />');
+		
+		$("#feedback span").animate({ backgroundColor:"aqua" }, 500);
+
+		if (notesLecture[rel][0] == null || notesLecture[rel][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+			notesLecture[rel][0] = note;
+			notesLecture[rel][1] = image;
+
+
+		}
+		afficheMenuApprentissage();
+	}
+	else {		// entre les deux
+		mot_a_cliquer = verbes[rel][verbe];
+		afficheContenantApprentissage(verbe);
+	}	
+
+
+}
+
+function afficheContenantApprentissage() {
+
+
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#consigne").html('');
+
+	$("#feedback").css('display:none');
+
+	$("#lien").html('');
+	
+	$("#consigne").html('Conjugue le verbe <strong class="conjugue">'+verbe+'</strong> au présent.');
+
+
+	for (var i = 0; i < 6; i++) {	// boucle qui affiche les pronoms personnels
+		
+		pronom = pronomsPersonnels[i];
+
+		audio = '';
+
+		if (verbes[numeroDuVerbe][1] && i==0) { pronom = "j'";}
+		
+		if (verbes[numeroDuVerbe][4]) { audio ='<img src="images/son.png" class="hautparleur" />';}
+	
+		l = i+1;
+
+
+			$("#contenu-gauche").append('<p class="conjugue" rel="' + verbes[numeroDuVerbe][2][i] + '">'+ audio +'<audio class="audio" preload="auto"><source src="sons/conjugaison/present/'+ verbes[numeroDuVerbe][3] +'/'+l+'.ogg" type="audio/ogg"></audio> ' + pronom + ' <input type="text" class="motEcrit" size="6" /> <span class="message"></span></p>');
+
+	}
+
+
+$('.hautparleur').click(function() {
+	 $(this).next().get(0).play();
+ });
+
+$(':input').blur(function(){
+
+	rel = $(this).parent().attr("rel");
+
+	val = $(this).val();
+
+	if (rel == val) {
+
+
+  $(this).parent().find('span').html('<img src="images/valide.png" alt="valide" class="retroaction" />');
+}
+	else {
+
+  $(this).parent().find('span').html(rel + ' <img src="images/erreur.png" alt="erreur" class="retroaction" />');
+}	
+
+
+});
+
+}
+
+afficheMenuTest();
+	
+});	 // fin jquery
+
+</script>
+
+</body>
+</html>

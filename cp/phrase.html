@@ -1,0 +1,477 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+        	<meta charset="utf-8" />
+		<title>Apprenti-Sage - Ordonner les mots d'une phrase</title>
+		<link type="text/css" href="css/start/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
+		<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+		<link rel="stylesheet" media="screen" type="text/css" title="design" href="phrase.css" />
+		<script type="text/javascript" src="js/jquery.js"></script> 
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+		<script type="text/javascript" src="js/jquery.color.js"></script>   
+		<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+		<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+		<script type="text/javascript" src="js/jquery.json.js"></script>
+		<script type="text/javascript" src="js/jquery.ui.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				
+				//hover states on the static widgets
+				$('#dialog_link, ul#icons li').hover(
+					function() { $(this).addClass('ui-state-hover'); }, 
+					function() { $(this).removeClass('ui-state-hover'); }
+				);
+				
+			});
+		</script>
+</head>
+
+
+
+
+
+<body>
+
+<nav> <!-- menu de navigation en haut -->
+<ul>
+	<li class="actuel"><a href="lecture.html">Lecture</a>
+		<ul>
+			<li><a href="lecture.html">Syllabes</a></li>
+			
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee.html">Dictée</a>
+		<ul>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+
+<section id="centrale">
+
+<header>
+
+
+
+	<div id="consigne"><p>Clique sur une activité dans le menu.</p></div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+<div id="milieu">
+
+</div>
+
+	</section>
+<script type="text/javascript">
+//déclaration des variables globales
+
+var menu = [["Niveau 1",1], ["Niveau 2",2], ["Niveau 3",3]];
+
+var notesPhrase;
+var notesPhraseEncodeesEnJSON;
+
+var tableau_de_phrases1;
+var tableau_de_phrases2;
+var tableau_de_phrases3;
+var tableau;
+var une_phrase;
+var une_phrase_melange;
+var phrase_correcte;
+var a;
+var b;
+var c;
+var d;
+var e;
+var f;
+
+// adapté de source PLF- http://www.jejavascript.net/nbaleat.php
+
+var nb_max;
+
+var tirage = [];
+
+var nb_tries = [];
+
+var nombres;
+
+var nb_etiquettes;
+
+var i;
+
+var k;
+
+var l;
+
+var m;
+
+var valide;
+
+var niveau;
+
+var nb_aleatoire;
+
+var nombre;
+
+var ordre_des_phrases = [0,1,2,3,4,5,6,7,8,9];
+
+var ordre_aleatoire_des_phrases;
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+function randomInt(mini, maxi) { 	// fonction : trouver un nombre entier aléatoire
+     var nb = mini + (maxi+1-mini)*Math.random();
+     return Math.floor(nb);
+}
+
+Array.prototype.shuffle = function(n) { 	// fonction qui mélange un tableau au hasard
+     if(!n)
+          n = this.length;
+     if(n > 1) {
+          var i = randomInt(0, n-1);
+          var tmp = this[i];
+          this[i] = this[n-1];
+          this[n-1] = tmp;
+          this.shuffle(n-1);
+     }
+};
+
+function nb_aleatoire(nb_max) {
+nombre= Math.floor(Math.random() * nb_max)+1;
+} 
+
+
+function sortNumber(a,b) {
+return a - b;
+}
+
+function afficheEtiquettes() {
+
+$('#consigne').hide();
+
+nombres ="";
+$('#milieu').html('<ul id="sortable"></ul><form id="formulaire"><input id="soumettre" type="submit" value="Ok" /></form>');
+
+l = k-1;
+
+m = ordre_aleatoire_des_phrases[l];
+
+une_phrase = tableau[m].slice();
+
+une_phrase_melange = une_phrase.slice();
+
+une_phrase_melange.shuffle();
+
+for (i=0 ;i<une_phrase.length;i++) { // affichage des étiquettes
+$('#sortable').append('<li class="ui-state-default">' + une_phrase_melange[i] + '</li>');
+}
+// Attention, ne pas déplacer le code ci-dessous ni le modifier, sinon le déplacement des étiquettes n'est pas réactif //
+	$(function() {
+		$( "#sortable" ).sortable({
+			placeholder: "ui-state-highlight",
+			forcePlaceholderSize: true
+		});
+	});
+
+
+
+
+nb_tries = tirage.slice();
+
+nb_tries.sort(sortNumber);
+
+//alert('nombres au hazard : '+nombres);
+
+//alert('nombres tries : '+nb_tries);
+
+
+$('#formulaire').submit(function() {
+
+valide = true;
+
+
+for (i=0 ;i<une_phrase.length;i++) { // vérification : compare la valeur de chaque étiquette à la variable une_phrase[i]
+	if ( $('#sortable').find('li').eq(i).text() != une_phrase[i]) { valide=false; }
+}
+
+if (valide) {
+		score++;
+		$('#feedback').html('<p><span class="reussi">Bravo ! '+score+'/'+k+'</span></p>');
+		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+		decide();
+}
+else {
+
+	phrase_correcte = une_phrase.join(' ');
+
+		$('#feedback').html('<p>Tu as fait une erreur, la phrase était : <span class="gras">' + phrase_correcte + '</span> '+score+'/'+k+'</p>');
+	$('#feedback').append('<p><a href="#" class="continuer">Continuer</a></p>');
+	$('#formulaire').html('');
+	$('.continuer').focus();
+	$('.continuer').click(function(){ continuer();});
+}
+
+	return false;
+});
+
+
+	$('#soumettre').focus();
+
+}
+
+function continuer() {
+	$('#feedback').html('');
+	decide();
+}
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Ranger les mots</caption>');
+
+
+
+if ($.cookie('notesPhrase') != null) { // si le cookie notesPhrase existe
+	
+	 notesPhrase = $.cookie('notesPhrase');
+	notesPhrase = $.evalJSON( notesPhrase );
+}
+else {
+	 notesPhrase = [
+			
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null]
+		];
+}
+
+
+	for (var i = 0; i < menu.length; i++) {
+
+
+		if (notesPhrase[i][0] == null) {
+			notes = '';
+			couleur = '';
+		}
+		else {
+			notes = notesPhrase[i][0] + '/10';
+			couleur = notesPhrase[i][1];
+		}	
+	
+$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + menu[i][1] + '">' + menu[i][0] + '</a></td><td class="note ' + couleur + '">' + notes + '</td></tr>');
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;
+	$("#feedback").html('');
+	nb = parseInt($(this).attr("rel")); // convertit la valeur string en number avec parseInt
+	niveau = nb;
+
+
+	if (niveau == 1) { tableau = tableau_de_phrases1 }
+	if (niveau == 2) { tableau = tableau_de_phrases2 }
+	if (niveau == 3) { tableau = tableau_de_phrases3 }
+	
+	nombre_max = nb*10;
+	nb_max = nombre_max - 1;
+	initialise();
+});
+
+}
+
+function initialise() {
+	k = 1;
+	score = 0;
+
+	ordre_aleatoire_des_phrases = ordre_des_phrases.slice();	 // on duplique le tableau avant de le mélanger
+
+	ordre_aleatoire_des_phrases.shuffle();  	 // on mélange le tableau de manière aléatoire
+
+	afficheEtiquettes();
+}
+
+
+function decide() {
+	if (k == 10) { 	// dernière série
+
+		$("#milieu").html('');
+
+		note = score;
+
+		nb_erreurs = 10-score;
+
+	s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+
+		if (note == 10) { message = 'Très bien !'; image = 'vert'; }
+		else if (note > 6) { message = 'Bien'; image = 'jaune'; }
+		else if (note > 3) { message = 'Moyen'; image = 'orange'; }
+		else { message = 'Insuffisant'; image = 'rouge'; }
+
+			num = nb - 1;
+
+			if (notesPhrase[num][0] == null || notesPhrase[num][0] < note) { // si la note est null ou inférieure à la nouvelle
+
+				notesPhrase[num][0] = note;
+				notesPhrase[num][1] = image;
+
+				notesPhraseEncodeesEnJSON = $.toJSON( notesPhrase ); // encodage en JSON du tableau de notes
+
+				$.cookie('notesPhrase', notesPhraseEncodeesEnJSON); // on écrit le cookie avec la meilleure note
+
+						// mise à jour de la note
+
+				n = note + '/10';
+
+
+				$(".note").eq(''+num+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+			}
+
+		$('#feedback').html('<p><span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur'+s+'. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span></p>');
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+	}
+	else {		// entre les deux
+		k++;
+		afficheEtiquettes();
+	}	
+
+
+}
+
+tableau_de_phrases1 = [
+	['Il','marche.'],
+	['Samir','mange','vite.'],
+	['Le','cheval','galope.'],
+	['Elle','dort.'],
+	['Le','soleil','brille.'],
+	['Maman','est','arrivée.'],
+	['Le','chaton','miaule.'],
+	['Il','neige.'],
+	['Les','élèves','courent.'],
+	['Le','téléphone','sonne.']
+];
+
+
+tableau_de_phrases2 = [
+	['Pierre','fait','du','vélo.'],
+	['Papa','va','faire','les','courses.'],
+	['Je','vais','à','la','piscine.'],
+	['Maman','regarde','la','télévision.'],
+	['Il','lit','un','livre.'],
+	['Nous','partons','en','voyage.'],
+	['Les','plantes','poussent','doucement.'],
+	['Les','lions','chassent','les','gazelles.'],
+	['Elle','parlait','à','sa','maman.'],
+	['Il','fête','son','anniversaire.']
+];
+
+
+tableau_de_phrases3 = [
+	['Léo','se','promène','avec','son','chien.'],
+	['Est-ce','que','vous','mangez','à','la','cantine ?'],
+	['La','neige','tombe','sur','le','sol.'],
+	['Demain,','nous','irons','dans','la','forêt.'],
+	['Quand','est-ce','que','tu','viens','nous','voir ?'],
+	['Tu','écriras','à','Marc','ce','soir.'],
+	['Selma','écrit','une','lettre','à','son','père.'],
+	['La','belette','et','le','lapin','sont','des','animaux.'],
+	['Ils','lisent','un','livre','à','la','bibliothèque.'],
+	['Attention','à','la','marche !']
+];
+
+afficheMenu();
+	
+</script>
+	</body>
+</html>
+
+

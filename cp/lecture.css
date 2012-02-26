@@ -1,0 +1,128 @@
+
+/*
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+*/
+
+/* styles du logiciel Apprenti Sage
+
+ text-transform: uppercase;  
+
+la police cursive est dérivée de gino, ( Jean-Claude Gineau ) modifiée par Antoine Fetet, le $ permet d'enlever le jambage du s.
+
+source : http://ecoles.ac-rouen.fr/aubin-epinay/ressources.html
+*/
+
+@font-face {
+font-family: 'cursiveff';
+src: url('polices/cursive.ttf');
+}
+
+
+aside {
+max-width:200px;
+height:500px;
+overflow:auto;
+margin-top:40px;
+padding-top:"-20px";
+padding-bottom:40px;
+}
+
+#centrale {
+display:inline-block;
+vertical-align:top;
+/*border:3px solid blue;*/
+width:68%;
+min-width:710px;
+}
+
+
+#contenu-droit {
+
+}
+
+.reussi, .bilan {
+border:1px solid black;
+background-color:aqua;
+}
+
+
+.serie {
+cursor:pointer;
+background-color:orange;
+
+}
+
+.juste {
+background-color: white;
+padding: 10px;
+margin: 0 10px;
+border: black solid 1px;
+font-size:2em;
+}
+
+.erreur {
+background-color: silver;
+padding: 10px;
+margin: 0 10px;
+border:black solid 1px;
+font-size:2em;
+}
+
+
+
+.majuscule {
+font-size: 3em;
+font-family:arial,serif;
+text-transform: uppercase;  
+line-height:1.5em;
+}
+
+.script {
+font-size: 3em;
+font-family:arial,serif;
+line-height:1.5em;
+}
+
+.attache {
+font-family:cursiveff;
+font-size: 4em;
+line-height:1.5em;
+}
+
+.petit {
+font-size:2em;
+line-height:1em;
+}

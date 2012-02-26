@@ -1,0 +1,105 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Accueil CE1</title>
+ <link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+<style>
+
+#prenom {
+font-size:1.3em;
+}
+
+.prenom {
+margin:20px;
+}
+
+</style>
+</head>
+
+    <body>
+
+<form action="lecture-mots.html" autocomplete="off">
+<p class="prenom">
+
+	<label for="prenom">Ecris ton prénom : </label>
+
+	<input type="text" name="prenom" id="prenom" placeholder="Prénom" size="7" maxlength="20" autofocus required />
+	<input type="submit" value="Entrer" id="valider" />
+</p>
+</form>
+
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script src="js/jquery.cookie.js"></script>   
+<script type="text/javascript">
+
+
+$(function(){
+						
+	$.cookie('notesConjugaison', null);		
+	$.cookie('notesImparfait', null);		
+	$.cookie('notesFutur', null);		
+	$.cookie('notesLectureNombres', null);		
+	$.cookie('notesLectureMots', null);		
+	$.cookie('notesDicteeNombres', null);		
+	$.cookie('notesDicteeMots', null);		
+	$.cookie('notesMaths', null);		
+	$.cookie('notesPhrase', null);		
+	$.cookie('notesRanger', null);		
+	$.cookie('notesAdditions', null);		
+	$.cookie('notesMultiplications', null);
+	$.cookie('notesSoustractions', null);		
+	$.cookie('notesDivers', null);		
+
+	$("form").submit(function() {
+
+		var prenom_entre = $("#prenom").val();
+
+		$.cookie('prenom', prenom_entre);
+
+	});
+
+});
+
+
+</script>
+    </body>
+</html>

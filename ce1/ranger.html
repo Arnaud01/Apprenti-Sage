@@ -1,0 +1,392 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+        	<meta charset="utf-8" />
+		<title>Apprenti-Sage - Ranger les nombres dans l'ordre</title>
+		<link type="text/css" href="css/start/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
+		<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+		<link rel="stylesheet" media="screen" type="text/css" title="design" href="ranger.css" />
+		<script type="text/javascript" src="js/jquery.js"></script> 
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+		<script type="text/javascript" src="js/jquery.color.js"></script>   
+		<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+		<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+		<script type="text/javascript" src="js/jquery.json.js"></script>
+		<script type="text/javascript" src="js/jquery.ui.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				
+				//hover states on the static widgets
+				$('#dialog_link, ul#icons li').hover(
+					function() { $(this).addClass('ui-state-hover'); }, 
+					function() { $(this).removeClass('ui-state-hover'); }
+				);
+				
+			});
+		</script>
+</head>
+
+
+
+
+
+<body>
+
+<nav>
+<ul>
+	<li><a href="lecture-mots.html">Lecture</a>
+		<ul>
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee-mots.html">Dictée</a>
+		<ul>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="conjugaison.html">Conjugaison</a>
+		<ul>
+			<li><a href="conjugaison.html">Présent</a></li>
+			<li><a href="futur.html">Futur</a></li>
+			<li><a href="imparfait.html">Imparfait</a></li>
+			
+		</ul>
+	</li>
+	<li class="actuel"><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li><li><a href="multiplications.html">Multiplications</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+
+<section id="centrale">
+
+<header>
+
+
+
+	<div id="consigne"><p>Clique sur une activité dans le menu.</p></div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+<div id="milieu">
+
+</div>
+
+	</section>
+<script type="text/javascript">
+//déclaration des variables globales
+
+var menu = [["nombres &le; à 100",1,10],["nombres &le; à 1000",2,100]];
+
+var notesRanger;
+var notesRangerEncodeesEnJSON;
+
+var a;
+var b;
+var c;
+var d;
+var e;
+var f;
+
+// adapté de source PLF- http://www.jejavascript.net/nbaleat.php
+
+var nb_max;
+
+var tirage = [];
+
+var nb_tries = [];
+
+var nombres;
+
+var nb_etiquettes = 6;
+
+var i;
+
+var nb_aleatoire;
+
+var nombre;
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+function nb_aleatoire(nb_max) {
+nombre= Math.floor(Math.random() * nb_max)+1;
+} 
+
+
+function sortNumber(a,b) {
+return a - b;
+}
+
+function afficheEtiquettes() {
+
+$('#consigne').hide();
+
+nombres ="";
+$('#milieu').html('<ul id="sortable"></ul><form id="formulaire"><input id="soumettre" type="submit" value="Ok" /></form>');
+
+for (i=0 ;i<nb_etiquettes ;i++) {
+	nb_aleatoire(nb_max);
+	tirage[i]= nombre;
+	for (t=0 ; t<i ;t++) {
+		if (tirage[t]==nombre) {
+			i=i-1;
+		}
+	}
+}
+
+for (i=0 ;i<nb_etiquettes ;i++) { // affichage des étiquettes
+$('#sortable').append('<li class="ui-state-default"><span class="icon"><img src="css/start/images/noun_project_301.png" /></span>' + tirage[i] + '</li>');
+	nombres= nombres+tirage[i]+" ";
+}
+// Attention, ne pas déplacer le code ci-dessous ni le modifier, sinon le déplacement des étiquettes n'est pas réactif //
+	$(function() {
+		$( "#sortable" ).sortable({
+			placeholder: "ui-state-highlight",
+			forcePlaceholderSize: true
+		});
+	});
+
+
+
+
+nb_tries = tirage.slice();
+
+nb_tries.sort(sortNumber);
+
+//alert('nombres au hazard : '+nombres);
+
+//alert('nombres tries : '+nb_tries);
+
+
+$('#formulaire').submit(function() {
+
+a = parseInt( $('#sortable').find('li').eq(0).text() );
+b = parseInt( $('#sortable').find('li').eq(1).text() );
+c = parseInt( $('#sortable').find('li').eq(2).text() );
+d = parseInt( $('#sortable').find('li').eq(3).text() );
+e = parseInt( $('#sortable').find('li').eq(4).text() );
+f = parseInt( $('#sortable').find('li').eq(5).text() );
+
+if ( (a<b) && (b<c) && (c<d) && (d<e) && (e<f) ) {
+		score++;
+		$('#feedback').html('<p><span class="reussi">Bravo ! '+score+'/'+k+'</span></p>');
+		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+		decide();
+}
+else {
+
+		$('#feedback').html('<p>Tu as fait une erreur, l\'ordre était : '+nb_tries+'. '+score+'/'+k+'</p>');
+	$('#feedback').append('<p><a href="#" class="continuer">Continuer</a></p>');
+	$('#formulaire').html('');
+	$('.continuer').focus();
+	$('.continuer').click(function(){ continuer();});
+}
+
+	return false;
+});
+
+
+	$('#soumettre').focus();
+
+}
+
+function continuer() {
+	$('#feedback').html('');
+	decide();
+}
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Ranger les nombres dans l\'ordre croissant</caption>');
+
+
+
+if ($.cookie('notesRanger') != null) { // si le cookie notesRanger existe
+	
+	 notesRanger = $.cookie('notesRanger');
+	notesRanger = $.evalJSON( notesRanger );
+}
+else {
+	 notesRanger = [
+			
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null]
+		];
+}
+
+
+	for (var i = 0; i < menu.length; i++) {
+
+
+		if (notesRanger[i][0] == null) {
+			notes = '';
+			couleur = '';
+		}
+		else {
+			notes = notesRanger[i][0] + '/10';
+			couleur = notesRanger[i][1];
+		}	
+	
+$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + menu[i][2] + '">' + menu[i][0] + '</a></td><td class="note ' + couleur + '">' + notes + '</td></tr>');
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;	
+	$("#feedback").html('');
+	nb = parseInt($(this).attr("rel")); // convertit la valeur string en number avec parseInt
+	nombre_max = nb*10;
+	nb_max = nombre_max - 1;
+	num = $(this).index('.item_menu');
+	initialise();
+});
+
+}
+
+function initialise() {
+	k = 1;
+	score = 0;
+	afficheEtiquettes();
+}
+
+
+function decide() {
+	if (k == 10) { 	// dernière série
+
+		$("#milieu").html('');
+
+		note = score;
+
+		nb_erreurs = 10-score;
+
+	s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+
+		if (note == 10) { message = 'Très bien !'; image = 'vert'; }
+		else if (note > 6) { message = 'Bien'; image = 'jaune'; }
+		else if (note > 3) { message = 'Moyen'; image = 'orange'; }
+		else { message = 'Insuffisant'; image = 'rouge'; }
+
+			if (notesRanger[num][0] == null || notesRanger[num][0] < note) { // si la note est null ou inférieure à la nouvelle
+
+				notesRanger[num][0] = note;
+				notesRanger[num][1] = image;
+
+				notesRangerEncodeesEnJSON = $.toJSON( notesRanger ); // encodage en JSON du tableau de notes
+
+				$.cookie('notesRanger', notesRangerEncodeesEnJSON); // on écrit le cookie avec la meilleure note
+
+						// mise à jour de la note
+
+				n = note + '/10';
+
+
+				$(".note").eq(''+num+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+			}
+
+		$('#feedback').html('<p><span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur'+s+'. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span></p>');
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+	}
+	else {		// entre les deux
+		k++;
+		afficheEtiquettes();
+	}	
+
+
+}
+
+
+
+afficheMenu();
+	
+</script>
+	</body>
+</html>
+
+

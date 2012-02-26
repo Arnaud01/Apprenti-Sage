@@ -1,0 +1,411 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Additions</title>
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="operations.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="skin/pink.flag/jplayer.pink.flag.css" />
+</head>
+
+<body>
+
+
+<nav>
+<ul>
+	<li><a href="lecture.html">Lecture</a>
+		<ul>
+			<li><a href="lecture.html">Syllabes</a></li>
+			
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee.html">Dictée</a>
+		<ul>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="actuel"><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+<section id="centrale">
+<header>
+
+
+
+	<div id="consigne">Clique sur une table dans le menu.</div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+
+	<section id="contenu-gauche">
+
+	</section>
+
+<section id="contenu-droit"></section>
+
+
+
+
+</section>
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script type="text/javascript" src="js/jquery.ui.js"></script> 
+<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+<script type="text/javascript" src="js/jquery.color.js"></script>   
+<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+<script type="text/javascript" src="js/jquery.json.js"></script>
+<script type="text/javascript">
+
+
+
+$(function(){ // début jQuery
+
+// déclaration de variables globales
+
+var notesAdditions;
+
+var notesAdditionsEncodeesEnJSON;
+
+var i;
+
+var j;
+
+var k;
+
+var y;
+
+var z;
+
+var serie;
+
+var rel;
+
+var numero;
+
+var reponse;
+
+var bonne_reponse;
+
+var nombres = [0,1,2,3,4,5,6,7,8,9,10];
+
+var nombres_melanges;
+
+var nombre;
+
+var nb_items;
+
+var nb_erreurs;
+
+var score;
+
+var n;
+
+var note;
+
+var menu = [["table du 1"], ["table du 2"], ["table du 3"],["table du 4"],["table du 5"],["table du 6"], ["table du 7"], ["table du 8"], ["table du 9"], ["table du 10"]];
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+
+
+
+function randomInt(mini, maxi) { 	// fonction : trouver un nombre entier aléatoire
+     var nb = mini + (maxi+1-mini)*Math.random();
+     return Math.floor(nb);
+}
+
+Array.prototype.shuffle = function(n) { 	// fonction qui mélange un tableau au hasard
+     if(!n)
+          n = this.length;
+     if(n > 1) {
+          var i = randomInt(0, n-1);
+          var tmp = this[i];
+          this[i] = this[n-1];
+          this[n-1] = tmp;
+          this.shuffle(n-1);
+     }
+};
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Additions</caption>');
+
+
+
+if ($.cookie('notesAdditions') != null) { // si le cookie notesAdditions existe
+	
+	 notesAdditions = $.cookie('notesAdditions');
+
+	notesAdditions = $.evalJSON( notesAdditions );
+}
+else {
+
+	 notesAdditions = [];
+
+	for (i = 0; i < menu.length; i++) {	// boucle qui remplit la variable notes
+	
+		notesAdditions.push([null,null]);
+	}
+
+			
+}
+
+	for (i = 0; i < menu.length; i++) {
+
+		if (notesAdditions[i][0] == null) {
+			n = '';
+			couleur = '';	
+		}
+		else {
+			couleur = notesAdditions[i][1];	
+			n = notesAdditions[i][0] + '/10';
+		}
+	
+
+	
+		$('#menu').append('<tr><td><a href="#" class="item_menu">' + menu[i][0] + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
+		
+
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+
+	k = 0;	
+
+	$("#feedback").html('');
+
+	rel = parseInt( $('.item_menu').index(this) );
+
+	numero = rel + 1 ;
+
+	nb_items = 11;
+
+	decide();
+});
+
+
+}
+
+function decide() {
+
+	if (k == 0) { 		// on vient de cliquer sur une série : initialisation de la série
+
+		k++;
+		
+		score = 0;
+		
+		nombres_melanges = nombres.slice();
+
+		nombres_melanges.shuffle();  	 // on mélange le tableau de manière aléatoire
+
+		afficheOperation();
+	}
+	else if (k == nb_items) { 	// dernier item de la série, fin, bilan
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+		
+		$("#lien").html('');
+		
+		note = score-1;
+
+		if (note == -1) { note = 0; }
+
+		nb_erreurs = 11-score;
+
+		s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+		if (note == 10) { message = 'Très bien !'; image = 'vert'; }
+		else if (note > 6) { message = 'Bien'; image = 'jaune'; }
+		else if (note > 3) { message = 'Moyen'; image = 'orange'; }
+		else { message = 'Insuffisant'; image = 'rouge'; }
+
+
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour calculer les ' + nb_items + ' additions. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+		if (notesAdditions[rel][0] == null || notesAdditions[rel][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+			notesAdditions[rel][0] = note;
+
+			notesAdditions[rel][1] = image;
+
+			notesAdditionsEncodeesEnJSON = $.toJSON( notesAdditions ); // encodage en JSON du tableau de notes
+	
+								// on écrit le cookie avec la meilleure note
+			$.cookie('notesAdditions', notesAdditionsEncodeesEnJSON) ;
+
+				// mise à jour de la note
+
+			n = note + '/10';
+
+			$(".note").eq(''+rel+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+
+	}
+
+
+	}
+	else {		// entre les deux
+		k++;
+		afficheOperation();
+	}	
+
+
+}
+
+
+function afficheOperation() {
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#consigne").html('');
+
+	$("#lien").html('');
+
+	j = k-1;	
+
+	nombre = nombres_melanges[j];
+	
+		$("#contenu-gauche").append('<form id="formulaire" autocomplete="off"><p class="right">' + numero + ' + ' + nombre + ' = <input type="text" id="reponse" name="reponse" maxlength="5" /><input type="submit" id="soumettre" value="Valider" /></p></form>');
+
+	$('#reponse').focus();	
+
+
+	$('#formulaire').submit(function() { // écoute l'événement submit
+
+		reponse = $('#reponse').val();
+		bonne_reponse = numero + nombre;
+		
+		if (reponse == numero + nombre) { // si c'est juste
+			score++;
+			$("#feedback").html('');
+			$("#feedback").html('<span class="reussi">Tu as réussi ! '+score+'/'+k+'</span>');
+			$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+	
+			decide();
+		}
+
+		else { // si c'est faux 
+			$("#feedback").html('Tu as écrit <span class="erreur petit">' + reponse + '</span> Or ' + numero + ' + ' + nombre + ' = <span class="juste petit">'  + bonne_reponse + '</span>'+score+'/'+k+'');
+
+		
+			$("#lien").html('<a href="#" class="continuer">Continuer</a>');
+			
+			$(".continuer").focus();
+
+			$(".continuer").click(function(event) {		// écoute l'événement click sur le lien recommence;
+			$("#feedback").html('');
+			decide();
+		});
+
+		$("#contenu-gauche").html('');
+		$("#contenu-droit").html('');
+	}	
+
+
+	});
+
+
+
+}
+
+
+afficheMenu();
+
+
+
+
+
+});	 // fin jQuery
+
+</script>
+
+</body>
+</html>

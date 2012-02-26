@@ -1,0 +1,476 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Compter les jetons</title>
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="maths.css" />
+	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+
+
+<nav> <!-- menu de navigation en haut -->
+<ul>
+	<li><a href="lecture.html">Lecture</a>
+		<ul>
+			<li><a href="lecture.html">Syllabes</a></li>
+			
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee.html">Dictée</a>
+		<ul>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li class="actuel"><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+<section id="centrale">
+<header>
+
+
+
+	<div id="consigne"><p>Clique sur une activité dans le menu.</p></div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+
+	<section id="contenu-gauche">
+
+	</section>
+
+<section id="contenu-droit">
+</section>
+
+
+
+
+</section>
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+<script type="text/javascript" src="js/jquery.color.js"></script>   
+<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+<script type="text/javascript" src="js/jquery.json.js"></script>
+<script type="text/javascript">
+
+
+
+$(function(){ // début jquery
+
+// déclaration de variables globales
+
+var notesMaths;
+
+var notesMathsEncodeesEnJSON;
+
+var nombre_max;
+
+var nombre;
+
+var nombreEcrit;
+
+var nb;
+
+var menu = [["nombres &le; à 10",1], ["nombres &le; à 20",2], ["nombres &le; à 30",3],["nombres &le; à 40",4],["nombres &le; à 50",5],["nombres &le; à 60",6], ["nombres &le; à 70",7], ["nombres &le; à 80",8], ["nombres &le; à 90",9], ["nombres &le; à 100",10]];
+
+var topdiv;
+
+var leftdiv;
+
+var nb_jetons_cliques;
+
+var k;
+
+var score;
+
+var note;
+
+var nb_erreurs;
+
+var n;
+
+var s;
+
+var num;
+
+var message;
+
+var largeur;
+
+var hauteur;
+
+var haut;
+
+var gauche;
+
+var id;
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+
+
+function entierAleatoire(mini, maxi) { 	// fonction : trouver un nombre entier aléatoire
+     var nb = mini + (maxi+1-mini)*Math.random();
+     return Math.floor(nb);
+}
+
+
+
+function initialise() {
+	k = 1;
+	score = 0;
+	afficheJetons();
+}
+
+function afficheJetons() {
+
+$('#contenu-gauche').html(''); // nettoie l'affichage : enlève tous les jetons déjà présent
+
+$('#contenu-droit').html('');
+
+$('#feedback').css('display','none'); // équivalent à .hide();
+
+$('#consigne').html('<p>Compte les jetons bleus. Pour cela, clique soit sur les jetons, soit sur "Ranger tous les jetons".</p>');
+
+
+topdiv = 3;
+
+leftdiv = 266;
+
+nb_jetons_cliques = 1;
+
+
+nombre = entierAleatoire(0,nombre_max);
+
+largeur = $('#contenu-gauche').width(); 
+
+hauteur =  $('#contenu-gauche').height(); 
+
+
+
+for (var i = 0; i < nb; i++) { 
+	$('#contenu-droit').append('<div class="regle"></div>');
+
+	$('#contenu-droit').append('<div class="spacer"></div>');
+}
+
+
+$('#contenu-droit').append('<form id="formulaire" autocomplete="off"><p class="center"><input type="text" id="nombreEcrit" name="nombreEcrit" /><input id="soumettre" type="submit" value="Valider" /></p></form>');
+
+$('#formulaire').submit(function() {
+
+	nombreEcrit = $('#nombreEcrit').val();	
+
+	verifie();
+	return false;
+});
+
+	for (var i = 0; i < nombre; i++) {
+		
+		haut = entierAleatoire(0,hauteur-30);
+		gauche = entierAleatoire(0,largeur-30);
+	
+		$('#contenu-gauche').append('<div class="jeton" id="jeton'+i+'"><img src="images/jeton_bleu.png" alt="jeton" /></div>');
+
+		$('.jeton:last').css({'top': haut+'px','left': gauche+'px'}); 
+
+	}
+
+
+
+$('.jeton').click(function(event) {    // écoute l'événement click sur les jetons et lance la fonction deplaceJeton() 
+
+	id = $(this).attr("id");
+
+	deplaceJeton();
+
+});
+
+$('#contenu-gauche').append('<div id="deplaceTousJetons"><a href="#"> >> Ranger tous les jetons</a></div>');
+
+$('#deplaceTousJetons a').click(function(event) {    // écoute l'événement click sur les jetons et lance la fonction deplaceJeton() 
+
+	deplaceTousJetons();
+
+});
+
+
+$("#deplaceTousJetons a").focus();
+
+}
+
+function deplaceJeton() {
+// variables id pour les jetons
+
+$('#'+id)
+  .animate({
+    top : topdiv+'px',
+    left : leftdiv+'px'
+  });
+
+leftdiv += 40; 
+
+if (nb_jetons_cliques == 10) { topdiv +=64; leftdiv=267; nb_jetons_cliques=0}
+
+nb_jetons_cliques ++;
+
+if (nb_jetons_cliques == 6) { leftdiv +=3; }
+
+
+}
+
+function deplaceTousJetons() {
+id = 0;
+
+topdiv = 3;
+
+leftdiv = 266;
+
+nb_jetons_cliques = 1;
+
+
+for (var i = 0; i < nombre; i++) {
+	$('#jeton'+id)
+	.animate({
+    		top : topdiv+'px',
+    		left : leftdiv+'px'
+	});
+
+	leftdiv += 40; 
+
+	if (nb_jetons_cliques == 10) { topdiv +=64; leftdiv=267; nb_jetons_cliques=0}
+
+	nb_jetons_cliques ++;
+
+	if (nb_jetons_cliques == 6) { leftdiv +=3; }
+	id++;
+	}
+$("#nombreEcrit").focus();
+}
+
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Compter les jetons</caption>');
+
+
+
+if ($.cookie('notesMaths') != null) { // si le cookie notesMaths existe
+	
+	 notesMaths = $.cookie('notesMaths');
+	notesMaths = $.evalJSON( notesMaths );
+}
+else {
+	 notesMaths = [
+			
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null],
+			[null,null]
+		];
+}
+
+
+	for (var i = 0; i < menu.length; i++) {
+
+
+		if (notesMaths[i][0] == null) {
+			notes = '';
+			couleur = '';
+		}
+		else {
+			notes = notesMaths[i][0] + '/10';
+			couleur = notesMaths[i][1];
+		}	
+	
+$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + menu[i][1] + '">' + menu[i][0] + '</a></td><td class="note ' + couleur + '">' + notes + '</td></tr>');
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;	
+	$("#feedback").html('');
+	nb = parseInt($(this).attr("rel")); // convertit la valeur string en number avec parseInt
+	nombre_max = nb*10;
+	initialise();
+});
+
+}
+
+function verifie() {
+
+		$('#consigne').hide();
+		$('#feedback').show();
+		$('#contenu-droit').find('form').text('');
+		$(window).scrollTop(0);
+
+
+nombre = nombre + ''; // convertir nombre (number) en chaîne de caractère (string)
+//alert('nombre : ' + nombre + typeof nombre +' nombreEcrit : ' + nombreEcrit + typeof nombreEcrit);
+		
+	if (nombre == nombreEcrit) {
+		score++;
+		$('#feedback').html('<p><span class="reussi">Bravo ! '+score+'/'+k+'</span></p>');
+		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+	}
+	else { 
+
+		$('#feedback').html('<p>Tu as trouvé <span class="erreur">'+nombreEcrit+ '</span> alors qu\'il y avait <span class="juste">'+nombre+'</span> jetons. '+score+'/'+k+'</p>');
+	 }
+	
+	$('#feedback').append('<p><a href="#" class="continuer">Continuer</a></p>');
+	$('.continuer').focus();
+	$('.continuer').click(function(){ decide();});
+
+
+}
+
+function decide() {
+	if (k == 10) { 	// dernière série
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+
+		note = score;
+
+		nb_erreurs = 10-score;
+
+	s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+
+		if (note == 10) { message = 'Très bien !'; image = 'vert'; }
+		else if (note > 6) { message = 'Bien'; image = 'jaune'; }
+		else if (note > 3) { message = 'Moyen'; image = 'orange'; }
+		else { message = 'Insuffisant'; image = 'rouge'; }
+
+			num = nb - 1;
+
+			if (notesMaths[num][0] == null || notesMaths[num][0] < note) { // si la note est null ou inférieure à la nouvelle
+
+				notesMaths[num][0] = note;
+				notesMaths[num][1] = image;
+
+				notesMathsEncodeesEnJSON = $.toJSON( notesMaths ); // encodage en JSON du tableau de notes
+
+				$.cookie('notesMaths', notesMathsEncodeesEnJSON); // on écrit le cookie avec la meilleure note
+
+						// mise à jour de la note
+
+				n = note + '/10';
+
+
+				$(".note").eq(''+num+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+			}
+
+		$('#feedback').html('<p><span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur'+s+'. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span></p>');
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+	}
+	else {		// entre les deux
+		k++;
+		afficheJetons();
+	}	
+
+
+}
+
+afficheMenu();
+	
+});	 // fin jquery
+
+</script>
+
+</body>
+</html>

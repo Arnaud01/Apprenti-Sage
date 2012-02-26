@@ -1,0 +1,785 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Lecture de syllabes 1</title>
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="lecture.css" />
+	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+
+
+<nav> <!-- menu de navigation en haut -->
+<ul>
+	<li class="actuel"><a href="lecture.html">Lecture</a>
+		<ul>
+			<li><a href="lecture.html">Syllabes</a></li>
+			
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee.html">Dictée</a>
+		<ul>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+<section id="centrale">
+<header>
+
+
+
+	<div id="consigne">Clique sur une série de syllabes dans le menu.</div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+
+	<section id="contenu-gauche">
+
+	</section>
+
+<section id="contenu-droit"></section>
+
+
+
+
+</section>
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script type="text/javascript" src="js/jquery.ui.js"></script> 
+<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+<script type="text/javascript" src="js/jquery.color.js"></script>   
+<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+<script type="text/javascript" src="js/jquery.json.js"></script>
+<script type="text/javascript">
+
+
+
+$(function(){ // début jQuery
+
+// déclaration de variables globales
+
+var notesLecture;
+
+var notesLectureEncodeesEnJSON;
+
+var ecriture;
+
+var j;
+
+var l;
+
+var z;
+
+var y;
+
+var mot;
+
+var serie;
+
+var mots_aleatoire;
+
+var rel;
+
+var numero;
+
+var tableau;
+
+var codeJplayerHtml = '<div id="jquery_jplayer_1" class="jp-jplayer"></div><div id="jp_container_1" class="jp-audio"><div class="jp-type-single"><div class="jp-gui jp-interface"><ul class="jp-controls"><li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li><li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li><li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li></ul></div></div></div>';
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+
+
+
+function randomInt(mini, maxi) { 	// fonction : trouver un nombre entier aléatoire
+     var nb = mini + (maxi+1-mini)*Math.random();
+     return Math.floor(nb);
+}
+
+Array.prototype.shuffle = function(n) { 	// fonction qui mélange un tableau au hasard
+     if(!n)
+          n = this.length;
+     if(n > 1) {
+          var i = randomInt(0, n-1);
+          var tmp = this[i];
+          this[i] = this[n-1];
+          this[n-1] = tmp;
+          this.shuffle(n-1);
+     }
+};
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Syllabes</caption>');
+
+
+
+if ($.cookie('notesLecture') != null) { // si le cookie notesLecture existe
+	
+	 notesLecture = $.cookie('notesLecture');
+
+	notesLecture = $.evalJSON( notesLecture );
+}
+else {
+
+	 notesLecture = [];
+
+	l = tableau.length * 3;
+
+	for (i = 0; i < l; i++) {	// boucle qui remplit la variable notes
+	
+		notesLecture.push([null,null]);
+	}
+
+			
+}
+	z=0;	
+
+	for (var i = 0; i < tableau.length; i++) {
+		y = i+1	;
+
+		$('#menu').append('<tr><td colspan="2" class="serie">Série ' + y + '</td></tr>');
+
+
+		for (var l=0; l<3; l++) {		
+
+		if (notesLecture[z][0] == null) {
+			n = '';
+			couleur = '';	
+		}
+		else {
+			couleur = notesLecture[z][1];	
+			n = notesLecture[z][0] + '/10';
+		}
+	
+
+			if (l==0) { ecriture = "majuscule";}
+			if (l==1) { ecriture = "attaché";}
+			if (l==2) { ecriture = "script";}
+
+	
+		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '"><span>' + ecriture + '</span> ' + y + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
+		
+		z++;
+
+		}
+
+
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;	
+	$("#feedback").html('');
+	rel = parseInt($(this).attr("rel"));
+	ecriture = $(this).find("span").text();
+
+	nb_items = tableau[rel][3].length;
+	numero = $(this).index('.item_menu');
+
+ 
+decide();
+});
+
+$('.serie').click(function() { // écoute l'événement click sur les séries et déclenche toggle : affiche ou cache
+
+    var num = $(this).parent('tr').index();
+	
+    var nu = num + 4;
+	
+    $('tr:lt('+nu+'):gt('+num+')').toggle('slow');
+});
+
+}
+
+function decide() {
+
+	if (j == 0) { 		// on vient de cliquer sur une série : initialisation de la série
+
+		serie = tableau[rel][1];
+
+		mot = j;
+
+		j++;
+		
+		nb_essais = 0;
+
+		mot_a_cliquer = tableau[rel][3][mot];
+
+		mots_aleatoire = tableau[rel][2].slice();	 // on duplique les mots humains de la séries rel
+
+		mots_aleatoire.shuffle();  	 // on mélange le tableau de manière aléatoire
+
+		afficheContenant(rel,mot);
+	}
+	else if (j > nb_items) { 	// dernier item de la série
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+		
+		nb_erreurs = nb_essais - nb_items;
+
+		s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+		if (nb_essais == nb_items) { message = 'Très bien !'; note = 10; image = 'vert'; }
+		else if (nb_essais <= 1.25 * nb_items) { message = 'Bien'; note = 9; image = 'jaune'; }
+		else if (nb_essais <= 1.5 * nb_items) { message = 'Bien'; note = 8; image = 'jaune'; }
+		else if (nb_essais <= 1.75 * nb_items) { message = 'Bien'; note = 7; image = 'jaune'; }
+		else if (nb_essais <= 2 * nb_items) { message = 'Moyen'; note = 6; image = 'orange'; }
+		else if (nb_essais <= 2.25 * nb_items) { message = 'Moyen'; note = 5; image = 'orange'; }
+		else if (nb_essais <= 2.5 * nb_items) { message = 'Moyen'; note = 4; image = 'orange'; }
+		else if (nb_essais <= 2.75 * nb_items) { message = 'Insuffisant'; note = 3; image = 'rouge'; }
+		else if (nb_essais <= 3 * nb_items) { message = 'Insuffisant'; note = 2; image = 'rouge'; }
+		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
+		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
+
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' syllabes. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+		if (notesLecture[numero][0] == null || notesLecture[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+
+			notesLecture[numero][0] = note;
+			notesLecture[numero][1] = image;
+
+			notesLectureEncodeesEnJSON = $.toJSON( notesLecture ); // encodage en JSON du tableau de notes
+	
+								// on écrit le cookie avec la meilleure note
+			$.cookie('notesLecture', notesLectureEncodeesEnJSON) ;
+
+				// mise à jour de la note
+
+			n = note + '/10';
+
+			$(".note").eq(''+numero+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+
+	}
+
+
+	}
+	else {		// entre les deux
+		mot_a_cliquer = tableau[rel][3][mot];
+		afficheContenant(rel,mot);
+	}	
+
+
+}
+
+
+function afficheContenant(rel,mot) {
+
+
+if (ecriture == "attaché") { ecriture = "attache"; }
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#contenu-droit").removeClass("attache script majuscule");
+	
+	$("#contenu-droit").addClass(ecriture);
+
+	$("#consigne").html('');
+
+	$("#lien").html('');
+
+	$("#contenu-gauche").append(codeJplayerHtml); // ajoute le code Jplayer HTML au div contenu-gauche
+
+	$("#jquery_jplayer_1").jPlayer({ // code Jplayer JavaScript
+		ready: function (event) {
+			$(this).jPlayer("setMedia", {
+				oga:'sons/' + serie + '/' + mot_a_cliquer + '.ogg'
+			});
+			  $(this).jPlayer("play"); // permet de jouer directement le son (autoplay)
+		},
+		supplied: "oga"
+	});
+
+
+	for (var i = 0; i < mots_aleatoire.length; i++) {	// boucle qui affiche mots_aleatoire
+	
+		$("#contenu-droit").append('<a href="#" class="mot">' + mots_aleatoire[i] + '</a><br />');
+	}
+
+	$(".mot").click(function(event) {	 // écoute l'événement click sur les mots et déclenche la fonction verifie();
+    	
+		// $(this).css("background-color","yellow");
+		verifie($(this).text());
+	});
+
+
+}
+
+function verifie(mot_clique) {
+
+	nb_essais++;
+	
+	if (mot_clique == mot_a_cliquer) {
+		j++;	
+		mot++;
+		$("#feedback").html('');
+		$("#feedback").html('<span class="reussi">Tu as réussi !</span>');
+		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+		
+		decide();
+
+	}
+	else {
+		$("#feedback").html('Tu as cliqué sur <span class="erreur ' + ecriture + ' petit">' + mot_clique + '</span> Tu devais cliquer sur <span class="juste '+ecriture+' petit">' + mot_a_cliquer + '</span>');
+	
+		$("#lien").html('<a href="#" class="recommence">Recommence</a>');
+		
+		$(".recommence").focus();
+
+		$(".recommence").click(function(event) {		// écoute l'événement click sur le lien recommence;
+			$("#feedback").html('');
+			decide();
+		});
+
+		$("#contenu-gauche").html('');
+		$("#contenu-droit").html('');
+	}	
+
+}
+
+tableau = [	 // ouverture niveau 0
+			[				 // ouverture niveau 1
+
+				"1",
+				'syllabes',
+				 ['ra','ri','ro'],	 // niveau 2
+				 ['ra','ri','ro']	 // niveau 2
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"2",
+				'syllabes',
+				  ['ma', 'mi', 'mo'],	 // niveau 2
+				  ['ma', 'mi', 'mo']	 // niveau 2
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"3",
+				'syllabes',
+				  ['la', 'li', 'lo'],  // niveau 2
+				  ['la', 'li', 'lo']  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"4",
+				'syllabes',
+				  ['ra', 'ma', 'la'],  // niveau 2
+				  ['ra', 'ma', 'la']  // niveau 2
+			],
+			[				 // ouverture niveau 1
+
+				"5",
+				'syllabes',
+				  ['ri', 'mi', 'li'],  // niveau 2
+				  ['ri', 'mi', 'li']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"6",
+				'syllabes',
+				  ['ro', 'mo', 'lo'],  // niveau 2
+				  ['ro', 'mo', 'lo']  // niveau 2
+			],
+
+							
+			[				 // ouverture niveau 1
+
+				"7",
+				'syllabes',
+				 ['ra','mi','lo','li'],	 // niveau 2
+				 ['ra','mi','lo','li']	 // niveau 2
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"8",
+				'syllabes',
+				  ['ro', 'ri', 'la','ma'],	 // niveau 2
+				  ['ro', 'ri', 'la','ma']	 // niveau 2
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"9",
+				'syllabes',
+				  ['mo', 'ro', 'li','la'],  // niveau 2
+				  ['mo', 'ro', 'li','la']  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"10",
+				'syllabes',
+				  ['ru', 'mu', 'lu'],  // niveau 2
+				  ['ru', 'mu', 'lu']  // niveau 2
+			],
+			[				 // ouverture niveau 1
+
+				"11",
+				'syllabes',
+				  ['ra', 'ri', 'ro', 'ru'],  // niveau 2
+				  ['ra', 'ri', 'ro', 'ru']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"12",
+				'syllabes',
+				  ['ma', 'mi', 'mo', 'mu'],  // niveau 2
+				  ['ma', 'mi', 'mo', 'mu']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"13",
+				'syllabes',
+				  ['la', 'li', 'lo', 'lu'],  // niveau 2
+				  ['la', 'li', 'lo', 'lu']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"14",
+				'syllabes',
+				  ['ri', 'mu', 'lo', 'ma'],  // niveau 2
+				  ['ri', 'mu', 'lo', 'ma']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"15",
+				'syllabes',
+				  ['mo', 'li', 'ra', 'lu'],  // niveau 2
+				  ['mo', 'li', 'ra', 'lu']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"16",
+				'syllabes',
+				  ['rou', 'mou', 'lou'],  // niveau 2
+				  ['rou', 'mou', 'lou']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"17",
+				'syllabes',
+				  ['ro', 'mi', 'lou', 'la'],  // niveau 2
+				  ['ro', 'mi', 'lou', 'la']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"18",
+				'syllabes',
+				  ['rou', 'ri', 'mou', 'ma','ra'],  // niveau 2
+				  ['rou', 'ri', 'mou', 'ma','ra']  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"19",
+				'syllabes',
+				  ['lo', 'lou', 'li', 'la','lu'],
+				  ['lo', 'lou', 'li', 'la','lu']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"20",
+				'syllabes',
+				  ['ra', 'ri', 'ro', 'ru','rou'],
+				  ['ra', 'ri', 'ro', 'ru','rou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"21",
+				'syllabes',
+				  ['vi', 'vou', 'vu', 'vo'],
+				  ['vi', 'vou', 'vu', 'vo']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"22",
+				'syllabes',
+				  ['ru', 'vu', 'lu', 'ju','mu'],
+				  ['ru', 'vu', 'lu', 'ju','mu']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"23",
+				'syllabes',
+				  ['jou', 'ju', 'vou', 'vi','vo'],
+				  ['jou', 'ju', 'vou', 'vi','vo']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"24",
+				'syllabes',
+				  ['ri', 'vi', 'li', 'jou','lou','vou'],
+				  ['ri', 'vi', 'li', 'jou','lou','vou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"25",
+				'syllabes',
+				  ['mi', 'fu', 'ma', 'fo','rou','fou'],
+				  ['mi', 'fu', 'ma', 'fo','rou','fou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"26",
+				'syllabes',
+				  ['cha', 'chou', 'cho', 'la','lou','li'],
+				  ['cha', 'chou', 'cho', 'la','lou','li']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"27",
+				'syllabes',
+				  ['fo', 'cho', 'vo', 'mo','lo','ro'],
+				  ['fo', 'cho', 'vo', 'mo','lo','ro']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"28",
+				'syllabes',
+				  ['fou', 'chou', 'vou', 'jou','mou','lou'],
+				  ['fou', 'chou', 'vou', 'jou','mou','lou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"29",
+				'syllabes',
+				  ['vu', 'mu', 'cha', 'fou','li','jou'],
+				  ['vu', 'mu', 'cha', 'fou','li','jou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"30",
+				'syllabes',
+				  ['sa', 'so', 'sou', 'si','su'],
+				  ['sa', 'so', 'sou', 'si','su']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"31",
+				'syllabes',
+				  ['si', 'li', 'mi', 'vi','ri'],
+				  ['si', 'li', 'mi', 'vi','ri']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"32",
+				'syllabes',
+				  ['moi', 'roi', 'loi', 'voi','joi','choi'],
+				  ['moi', 'roi', 'loi', 'voi','joi','choi']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"33",
+				'syllabes',
+				  ['foi', 'soi', 'roi', 'moi','joi','voi'],
+				  ['foi', 'soi', 'roi', 'moi','joi','voi']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"34",
+				'syllabes',
+				  ['la', 'loi', 'lou', 'lo','lu'],
+				  ['la', 'loi', 'lou', 'lo','lu']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"35",
+				'syllabes',
+				  ['moi', 'mu', 'foi', 'si','so','roi'],
+				  ['moi', 'mu', 'foi', 'si','so','roi']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"36",
+				'syllabes',
+				  ['me', 'ne', 'se', 'le','je'],
+				  ['me', 'ne', 'se', 'le','je']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"37",
+				'syllabes',
+				  ['fil', 'par', 'mal', 'sol','mur','sur'],
+				  ['fil', 'par', 'mal', 'sol','mur','sur']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"38",
+				'syllabes',
+				  ['lin', 'li', 'fin', 'vin'],
+				  ['lin', 'li', 'fin', 'vin']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"39",
+				'syllabes',
+				  ['mon', 'son', 'non', 'jon'],
+				  ['mon', 'son', 'non', 'jon']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"40",
+				'syllabes',
+				  ['non', 'ni', 'nu', 'nou'],
+				  ['non', 'ni', 'nu', 'nou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"41",
+				'syllabes',
+				  ['mu', 'nu', 'mi', 'ni'],
+				  ['mu', 'nu', 'mi', 'ni']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"42",
+				'syllabes',
+				  ['ba', 'bo', 'bou'],
+				  ['ba', 'bo', 'bou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"43",
+				'syllabes',
+				  ['du', 'do', 'dou'],
+				  ['du', 'do', 'dou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"44",
+				'syllabes',
+				  ['ba', 'do', 'bo', 'dou','bou','du'],
+				  ['ba', 'do', 'bo', 'dou','bou','du']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"45",
+				'syllabes',
+				  ['pa', 'po', 'pu', 'pi','pou'],
+				  ['pa', 'po', 'pu', 'pi','pou']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"46",
+				'syllabes',
+				  ['tu', 'ta', 'tou', 'te','to'],
+				  ['tu', 'ta', 'tou', 'te','to']
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"47",
+				'syllabes',
+				  ['ami', 'il', 'plu', 'pla','pli'],
+				  ['ami', 'il', 'plu', 'pla','pli']
+			],				// fermeture niveau 1
+];	// fermeture niveau 0	
+
+
+
+afficheMenu();
+
+
+
+
+
+});	 // fin jQuery
+
+</script>
+
+</body>
+</html>

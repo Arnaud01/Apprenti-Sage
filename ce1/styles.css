@@ -1,0 +1,321 @@
+
+/*
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+*/
+
+
+/* styles du logiciel Apprenti Sage
+
+la police cursive est dérivée de gino, ( Jean-Claude Gineau ) modifiée par Antoine Fetet, le $ permet d'enlever le jambage du s.
+
+source : http://ecoles.ac-rouen.fr/aubin-epinay/ressources.html
+*/
+
+* {
+margin:0;
+padding:0;
+}
+
+body {
+	background-color:#f0f0f0;
+} 
+
+
+@font-face {
+font-family: 'cursiveff';
+src: url('polices/cursive.ttf');
+}
+
+.prenom {
+font-size:1.4em;
+font-family:arial,serif;
+}
+
+#valider {
+font-size:1.2em;
+}
+
+nav >  ul > li:not(.droite) > a {
+margin : 0 0.7em;
+
+}
+
+nav {
+height:40px;
+width:100%;
+background-color:blue;
+position:absolute;
+top:0px;
+left:0px;
+z-index:2;
+}
+
+nav ul {
+margin:0;
+padding:0;
+padding-left:20px;
+}
+
+nav li {
+float:left;
+color : white;
+font-weight:bold;
+font-family:Arial,serif;
+padding : 5px 20px;
+line-height:2;
+list-style-type:none;
+}
+
+.actuel {
+background-color:white;
+}
+
+nav li.actuel a {
+    color : blue;
+}
+
+nav li a {
+color : white;
+font-weight:bold;
+}
+
+
+nav ul li ul {
+display :none;
+padding:0;
+margin-top:3px;
+background-color:white;
+}
+
+nav ul li ul li {
+float:none;
+padding:0;
+background-color:white;
+color:blue;
+}
+
+nav ul li {
+}
+
+nav li ul li a {
+color:blue;
+}
+
+nav ul li:hover ul {
+display:block;
+}
+
+.droite {
+float : right;
+}
+
+
+a {
+color : blue;
+text-decoration:none;
+}
+
+a:hover {
+text-decoration:underline;
+}
+
+aside {
+display:inline-block;
+vertical-align:top;
+/*border:3px solid red;*/
+width:28%; /* lorsqu'on met des bordures à un contenu de 100% (20% + 40% + 40%), cela dépasse les 100% et passe en dessous */
+height:400px;
+padding-left:10px;
+margin-top:20px;
+}
+
+
+#menu {
+margin-top:50px;
+border:2px black solid;
+top:100px;
+left:10px;
+padding:5px;
+border-collapse:collapse;
+font-family:arial,serif;
+}
+
+#caption {
+text-align:center;
+font-weight:bold;
+font-size:1.3em;
+color : #FF358B;
+margin-top:0;
+margin-bottom:5px;
+}
+
+#menu td {
+border:1px solid black;
+padding:2px;
+}
+
+#menu td a {
+color:#01B0F0;
+}
+
+
+#centrale {
+display:inline-block;
+vertical-align:top;
+/*border:3px solid blue;*/
+width:68%;
+z-index:1;
+}
+
+
+header {
+vertical-align:top;
+/*border:3px solid green;*/
+margin-top:50px;
+margin-bottom:20px;
+font-family:arial,serif;
+font-size:1.2em;
+text-align:center;
+text-align:center;
+padding-top:1px;
+}
+
+#consigne {
+/*font-weight:bold;*/
+}
+
+#feedback {
+margin:0 auto;
+line-height:4em;
+}
+
+#lien {
+margin:20px;
+margin-top:30px;
+}
+
+#feedback span{
+padding:10px 20px;
+}
+
+#contenu-gauche {
+display:inline-block;
+vertical-align:top;
+width:48%; /* lorsqu'on met des bordures à un contenu de 100% (20% + 40% + 40%), cela dépasse les 100% et passe en dessous */
+height:400px;
+font-size: 1.2em;
+font-family:Arial,serif;
+position : relative;
+/*background-color:pink;*/
+}
+
+.jeton {
+position:absolute;
+width:30px;
+height:30px;
+}
+
+.conjugue {
+text-align:right;
+}
+
+.retroaction {
+vertical-align:middle;
+}
+
+.message {
+}
+
+#player {
+margin-top : 40px ;
+}
+
+#jp_container_1 {
+margin:40px auto ;
+}
+
+#contenu-droit {
+display:inline-block;
+vertical-align:top;
+/* border:3px solid lime; */
+width:48%; /* lorsqu'on met des bordures à un contenu de 100% (20% + 40% + 40%), cela dépasse les 100% et passe en dessous */
+height:400px;
+}
+
+
+
+#contenu-droit a { 
+letter-spacing: 1px;
+}
+
+strong {
+letter-spacing: 1px;
+}
+
+.mot {
+line-height:1;  /* avant : 2 */
+}
+
+/*.mot a:active {
+   background-color: yellow;
+}
+*/
+
+#couleur {
+vertical-align: middle;
+position : relative;
+left:10px;
+}
+
+.vert {
+background-color: lime;
+}
+
+.jaune {
+background-color: yellow;
+}
+
+.orange {
+background-color: orange;
+}
+
+.rouge {
+background-color: red;
+}
+
+.gras {
+font-weight:bold;
+}

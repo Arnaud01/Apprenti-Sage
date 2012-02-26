@@ -1,0 +1,527 @@
+
+<!--
+Copyright (C) 2012 Arnaud Limon
+
+English
+    This file is part of Apprenti-Sage
+
+    Apprenti-Sage is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Apprenti-Sage is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Français
+    Apprenti-Sage est un logiciel libre : vous pouvez le redistribuer ou le
+    modifier selon les termes de la GNU Affero General Public Licence tels que
+    publiés par la Free Software Foundation : à votre choix, soit la
+    version 3 de la licence, soit une version ultérieure quelle qu'elle
+    soit.
+
+    Apprenti-Sage est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE
+    GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou
+    D'ADÉQUATION À UNE UTILISATION PARTICULIÈRE. Pour plus de détails,
+    reportez-vous à la GNU Affero General Public License.
+ 
+    Vous devez avoir reçu une copie de la GNU Affero General Public License
+    avec Foobar. Si ce n'est pas le cas, consultez
+    <http://www.gnu.org/licenses/> 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8" />
+        <title>Apprenti-Sage - Lecture de mots</title>
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="lecture-mots.css" />
+	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+
+
+<nav>
+<ul>
+	<li class="actuel"><a href="lecture-mots.html">Lecture</a>
+		<ul>
+			<li><a href="lecture-mots.html">Mots</a></li>
+			<li><a href="phrase.html">Phrases</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="dictee-mots.html">Dictée</a>
+		<ul>
+			<li><a href="dictee-mots.html">Mots</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="conjugaison.html">Conjugaison</a>
+		<ul>
+			<li><a href="conjugaison.html">Présent</a></li>
+			<li><a href="futur.html">Futur</a></li>
+			<li><a href="imparfait.html">Imparfait</a></li>
+			
+		</ul>
+	</li>
+	<li><a href="maths.html">Maths</a>
+		<ul>
+			<li><a href="maths.html">Compter</a></li>
+			<li><a href="lecture-nombres.html">Lire</a></li>
+			<li><a href="dictee-nombres.html">Écrire</a></li>
+			<li><a href="ranger.html">Ranger</a></li>
+			
+		</ul>
+
+	</li>
+	<li><a href="additions.html">Calcul</a>
+		<ul>
+			<li><a href="additions.html">Additions</a></li>
+			<li><a href="soustractions.html">Soustractions</a></li>
+			<li><a href="divers.html">Divers</a></li><li><a href="multiplications.html">Multiplications</a></li>
+			
+		</ul>
+
+	</li>
+	<li class="droite"><a href="index.html">Sortir</a></li>
+	<li class="droite" id="prenom"></li>
+	<li class="droite">Logiciel Apprenti Sage</li>
+</ul>
+</nav>
+
+<aside>
+	<div id="mode">
+
+	</div>
+
+	<table id="menu">
+
+	</table>
+
+</aside>
+
+<section id="centrale">
+<header>
+
+
+
+	<div id="consigne">Clique sur une série de mots dans le menu.</div>
+	<div id="feedback"></div>
+	<div id="lien"></div>
+</header>
+
+
+	<section id="contenu-gauche">
+
+	</section>
+
+<section id="contenu-droit"></section>
+
+
+
+
+</section>
+
+<script type="text/javascript" src="js/jquery.js"></script> 
+<script type="text/javascript" src="js/jquery.ui.js"></script> 
+<script type="text/javascript" src="js/jquery.cookie.js"></script>   
+<script type="text/javascript" src="js/jquery.color.js"></script>   
+<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+<script type="text/javascript" src="js/jquery.animate.shadow.js"></script>
+<script type="text/javascript" src="js/jquery.json.js"></script>
+<script type="text/javascript">
+
+
+
+$(function(){ // début jQuery
+
+// déclaration de variables globales
+
+var notesLectureMots;
+
+var notesLectureMotsEncodeesEnJSON;
+
+var j;
+
+var z;
+
+var mot_a_cliquer_humain;
+
+var mot_a_cliquer_informatique;
+
+var y;
+
+var mot;
+
+var serie;
+
+var mots_aleatoire;
+
+var rel;
+
+var numero;
+
+var tableau;
+
+var codeJplayerHtml = '<div id="jquery_jplayer_1" class="jp-jplayer"></div><div id="jp_container_1" class="jp-audio"><div class="jp-type-single"><div class="jp-gui jp-interface"><ul class="jp-controls"><li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li><li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li><li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li></ul></div></div></div>';
+
+
+	prenom = $.cookie("prenom");
+
+	$("#prenom").html(prenom);
+	
+
+
+
+function randomInt(mini, maxi) { 	// fonction : trouver un nombre entier aléatoire
+     var nb = mini + (maxi+1-mini)*Math.random();
+     return Math.floor(nb);
+}
+
+Array.prototype.shuffle = function(n) { 	// fonction qui mélange un tableau au hasard
+     if(!n)
+          n = this.length;
+     if(n > 1) {
+          var i = randomInt(0, n-1);
+          var tmp = this[i];
+          this[i] = this[n-1];
+          this[n-1] = tmp;
+          this.shuffle(n-1);
+     }
+};
+
+function afficheMenu() {
+
+	$('#menu').html('<caption id="caption">Mots</caption>');
+
+
+
+if ($.cookie('notesLectureMots') != null) { // si le cookie notesLectureMots existe
+	
+	 notesLectureMots = $.cookie('notesLectureMots');
+
+	notesLectureMots = $.evalJSON( notesLectureMots );
+}
+else {
+
+	 notesLectureMots = [];
+
+	for (var i = 0; i < tableau.length; i++) {	// boucle qui remplit la variable notes
+	
+		notesLectureMots.push([null,null]);
+	}
+
+			
+}
+
+	for (var i = 0; i < tableau.length; i++) {
+
+		if (notesLectureMots[i][0] == null) {
+			n = '';
+			couleur = '';	
+		}
+		else {
+			couleur = notesLectureMots[i][1];	
+			n = notesLectureMots[i][0] + '/10';
+		}
+	
+
+	
+		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">' + tableau[i][0] + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
+		
+
+	}
+
+$(".item_menu").click(function(event) {		// écoute l'événement click sur les liens du menu et déclenche la fonction decide();
+	j = 0;	
+	$("#feedback").html('');
+	rel = parseInt($(this).attr("rel"));
+
+	nb_items = tableau[rel][3].length;
+	numero = $(this).index('.item_menu');
+
+ 
+decide();
+});
+
+
+}
+
+function decide() {
+
+	if (j == 0) { 		// on vient de cliquer sur une série : initialisation de la série
+
+		serie = tableau[rel][1];
+
+		mot = j;
+
+		j++;
+		
+		nb_essais = 0;
+
+		mot_a_cliquer_humain = tableau[rel][2][mot];
+		mot_a_cliquer_informatique = tableau[rel][3][mot];
+
+		mots_aleatoire = tableau[rel][2].slice();	 // on duplique les mots humains de la séries rel
+
+		mots_aleatoire.shuffle();  	 // on mélange le tableau de manière aléatoire
+
+		afficheContenant();
+	}
+	else if (j > nb_items) { 	// dernier item de la série
+
+		$("#contenu-gauche").html('');
+
+		$("#contenu-droit").html('');
+		
+		nb_erreurs = nb_essais - nb_items;
+
+		s = nb_erreurs < 2 ? '' : 's';	// ternaire	 variable = test à réaliser ? valeurSiVrai : ValeurSiFaux ;
+
+		if (nb_essais == nb_items) { message = 'Très bien !'; note = 10; image = 'vert'; }
+		else if (nb_essais <= 1.25 * nb_items) { message = 'Bien'; note = 9; image = 'jaune'; }
+		else if (nb_essais <= 1.5 * nb_items) { message = 'Bien'; note = 8; image = 'jaune'; }
+		else if (nb_essais <= 1.75 * nb_items) { message = 'Bien'; note = 7; image = 'jaune'; }
+		else if (nb_essais <= 2 * nb_items) { message = 'Moyen'; note = 6; image = 'orange'; }
+		else if (nb_essais <= 2.25 * nb_items) { message = 'Moyen'; note = 5; image = 'orange'; }
+		else if (nb_essais <= 2.5 * nb_items) { message = 'Moyen'; note = 4; image = 'orange'; }
+		else if (nb_essais <= 2.75 * nb_items) { message = 'Insuffisant'; note = 3; image = 'rouge'; }
+		else if (nb_essais <= 3 * nb_items) { message = 'Insuffisant'; note = 2; image = 'rouge'; }
+		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
+		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
+
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' syllabes de la série. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		
+		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+
+		if (notesLectureMots[numero][0] == null || notesLectureMots[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+
+			notesLectureMots[numero][0] = note;
+			notesLectureMots[numero][1] = image;
+
+			notesLectureMotsEncodeesEnJSON = $.toJSON( notesLectureMots ); // encodage en JSON du tableau de notes
+	
+								// on écrit le cookie avec la meilleure note
+			$.cookie('notesLectureMots', notesLectureMotsEncodeesEnJSON) ;
+
+				// mise à jour de la note
+
+			n = note + '/10';
+
+			$(".note").eq(''+numero+'').text(''+n+'').removeClass('vert jaune orange rouge').addClass(''+image+'');
+
+
+	}
+
+
+	}
+	else {		// entre les deux
+		mot_a_cliquer_humain = tableau[rel][2][mot];
+		mot_a_cliquer_informatique = tableau[rel][3][mot];
+		afficheContenant();
+	}	
+
+
+}
+
+
+function afficheContenant() {
+
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#consigne").html('');
+
+	$("#lien").html('');
+
+	$("#contenu-gauche").append(codeJplayerHtml); // ajoute le code Jplayer HTML au div contenu-gauche
+
+	$("#jquery_jplayer_1").jPlayer({ // code Jplayer JavaScript
+		ready: function (event) {
+			$(this).jPlayer("setMedia", {
+				oga:'sons/' + serie + '/' + mot_a_cliquer_informatique + '.ogg'
+			});
+			  $(this).jPlayer("play"); // permet de jouer directement le son (autoplay)
+		},
+		supplied: "oga"
+	});
+
+
+	for (var i = 0; i < mots_aleatoire.length; i++) {	// boucle qui affiche mots_aleatoire
+	
+		$("#contenu-droit").append('<a href="#" class="mot">' + mots_aleatoire[i] + '</a><br />');
+	}
+
+	$(".mot").click(function(event) {	 // écoute l'événement click sur les mots et déclenche la fonction verifie();
+    	
+		// $(this).css("background-color","yellow");
+		verifie($(this).text());
+	});
+
+
+}
+
+function verifie(mot_clique) {
+
+	nb_essais++;
+	
+	if (mot_clique == mot_a_cliquer_humain) {
+		j++;	
+		mot++;
+		$("#feedback").html('');
+		$("#feedback").html('<span class="reussi">Tu as réussi !</span>');
+		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
+		
+		decide();
+
+	}
+	else {
+		$("#feedback").html('Tu as fait une erreur. Tu as cliqué sur <span class="erreur petit">' + mot_clique + '</span> Tu devais cliquer sur <span class="juste petit">' + mot_a_cliquer_humain + '</span>');
+	
+		$("#lien").html('<a href="#" class="recommence">Recommence</a>');
+		
+		$(".recommence").focus();
+
+		$(".recommence").click(function(event) {		// écoute l'événement click sur le lien recommence;
+			$("#feedback").html('');
+			decide();
+		});
+
+		$("#contenu-gauche").html('');
+		$("#contenu-droit").html('');
+	}	
+
+}
+
+tableau = [	 // ouverture niveau 0
+	
+			[				 // ouverture niveau 1
+
+				"Série 1",
+				'mots',
+				  ['je','tu','il','elle','on','nous','vous'],  // niveau 2
+				  ['je','tu','il','elle','on','nous','vous'],  // niveau 2
+			],				// fermeture niveau 1
+
+
+			[				 // ouverture niveau 1
+
+				"Série 2",
+				'mots',
+				  ["c'est",'dans','avec','mais','ne','pas'],  // niveau 2
+				  ["cest",'dans','avec','mais','ne','pas'],  // niveau 2
+			],				// fermeture niveau 1
+							
+			[				 // ouverture niveau 1
+
+				"Série 3",
+				'mots',
+				  ['de','à','sur','est','pour','que'],  // niveau 2
+				  ['de','a','sur','est','pour','que'],  // niveau 2
+			],				// fermeture niveau 1
+
+
+
+			[				 // ouverture niveau 1
+
+				"Série 4",
+				'mots',
+				  ['se','son','sa','ses','et','qui'],  // niveau 2
+				  ['ce','son','sa','ses','et','qui'],  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"Jours de la semaine",
+				'jours_semaine',
+				  ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],  // niveau 2
+				  ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"Série 5",
+				'mots',
+				  ['où','là','lui','puis','oui','non'],  // niveau 2
+				  ['ou','la','lui','puis','oui','non'],  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"Série 6",
+				'mots',
+				  ['ce','en','du','au','par','plus'],  // niveau 2
+				  ['ce','en','du','au','par','plu'],  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"Série 7",
+				'mots',
+				  ['mon','ma','mes','notre','votre','leur'],  // niveau 2
+				  ['mon','ma','mes','notre','votre','leur'],  // niveau 2
+			],				// fermeture niveau 1
+
+			[				 // ouverture niveau 1
+
+				"Série 8",
+				'mots',
+				  ['comme','tout','bien','sans','me'],  // niveau 2
+				  ['comme','tout','bien','sans','me'],  // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"Chiffres",
+				'chiffres',
+				 ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf'],	 // niveau 2
+				 ['zero','un','deux','trois','quatre','cinq','six','sept','huit','neuf']	 // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"Couleurs",
+				'couleurs',
+				 ['rouge','vert','bleu','jaune','blanc','noir','orange','rose','violet'],	 // niveau 2
+				 ['rouge','vert','bleu','jaune','blanc','noir','orange','rose','violet'],	 // niveau 2
+			],				// fermeture niveau 1
+			[				 // ouverture niveau 1
+
+				"Nombres de 10 à 20",
+				'nombres_de_10_a_20',
+				  ['dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf','vingt'],	 // niveau 2
+				  ['dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf','vingt']	 // niveau 2
+			],				// fermeture niveau 1
+	
+			[				 // ouverture niveau 1
+
+				"Dizaines",
+				'dizaines',
+				  ['dix','vingt','trente','quarante','cinquante','soixante','soixante-dix','quatre-vingts','quatre-vingt-dix','cent'],  // niveau 2
+				  ['dix','vingt','trente','quarante','cinquante','soixante','soixante-dix','quatre-vingts','quatre-vingt-dix','cent']  // niveau 2
+			],				// fermeture niveau 1
+
+];	// fermeture niveau 0	
+
+
+
+afficheMenu();
+
+
+
+
+
+});	 // fin jQuery
+
+</script>
+
+</body>
+</html>
