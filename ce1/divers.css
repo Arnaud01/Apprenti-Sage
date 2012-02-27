@@ -35,6 +35,15 @@ Français
     avec Foobar. Si ce n'est pas le cas, consultez
     <http://www.gnu.org/licenses/> 
 */
+
+aside {
+width:20%;
+}
+
+#centrale {
+width:76%;
+}
+
 #contenu-gauche {
 width:90%;
 }
@@ -45,6 +54,7 @@ width:6%;
 
 #formulaire p {
 font-size:1.5em;
+text-align:center;
 }
 
 #reponse {

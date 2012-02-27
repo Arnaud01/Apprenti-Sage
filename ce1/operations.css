@@ -36,6 +36,14 @@ Français
     <http://www.gnu.org/licenses/> 
 */
 
+aside {
+width:16%;
+}
+
+#centrale {
+width:80%;
+}
+
 #formulaire p {
 font-size:1.5em;
 }
