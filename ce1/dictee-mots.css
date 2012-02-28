@@ -54,11 +54,19 @@ font-weight:bold;
 }
 
 aside {
-width:200px;
+width:20%;
 }
 
 #centrale {
-width:80%;
+width:76%;
+}
+
+#contenu-gauche {
+width:38%;
+}
+
+#contenu-droit {
+width:38%;
 }
 
 #mode {
