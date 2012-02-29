@@ -62,11 +62,11 @@ width:76%;
 }
 
 #contenu-gauche {
-width:38%;
+width:48%;
 }
 
 #contenu-droit {
-width:38%;
+width:48%;
 }
 
 #mode {
@@ -93,7 +93,8 @@ font-size:1.2em;
 }
 
 #motEcrit {
-font-size:2em;
+font-size:1.5em;
+width:220px;
 }
 
 #soumettre {
