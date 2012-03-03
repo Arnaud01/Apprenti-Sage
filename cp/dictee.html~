@@ -39,19 +39,18 @@ Français
 <html>
 <head>
         <meta charset="utf-8" />
-        <title>Apprenti-Sage - Lecture de syllabes 1</title>
+        <title>Apprenti-Sage - Dictée de syllabes</title>
 	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
-	<link rel="stylesheet" media="screen" type="text/css" title="design" href="lecture.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="dictee.css" />
 	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
 
 
-
-<nav> <!-- menu de navigation en haut -->
+<nav>
 <ul>
-	<li class="actuel"><a href="lecture.html">Lecture</a>
+	<li><a href="lecture.html">Lecture</a>
 		<ul>
 			<li><a href="lecture.html">Syllabes</a></li><li><a href="lecture-lettres.html">Lettres</a></li>
 			
@@ -60,9 +59,10 @@ Français
 			
 		</ul>
 	</li>
-	<li><a href="dictee.html">Dictée</a>
+	<li class="actuel"><a href="dictee.html">Dictée</a>
 		<ul>
-			<li><a href="dictee.html">Syllabes</a></li><li><a href="dictee-lettres.html">Lettres</a></li>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-lettres.html">Lettres</a></li>
 			<li><a href="dictee-mots.html">Mots</a></li>
 			
 		</ul>
@@ -91,6 +91,7 @@ Français
 	<li class="droite">Logiciel Apprenti Sage</li>
 </ul>
 </nav>
+
 
 <aside>
 	<div id="mode">
@@ -140,15 +141,13 @@ $(function(){ // début jQuery
 
 // déclaration de variables globales
 
-var notesLecture;
+var notesDictee;
 
-var notesLectureEncodeesEnJSON;
+var notesDicteeEncodeesEnJSON;
 
 var ecriture;
 
 var j;
-
-var l;
 
 var z;
 
@@ -165,6 +164,12 @@ var rel;
 var numero;
 
 var tableau;
+
+var motEcrit;
+
+var motAEcrire;
+
+var score;
 
 var codeJplayerHtml = '<div id="jquery_jplayer_1" class="jp-jplayer"></div><div id="jp_container_1" class="jp-audio"><div class="jp-type-single"><div class="jp-gui jp-interface"><ul class="jp-controls"><li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li><li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li><li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li></ul></div></div></div>';
 
@@ -193,27 +198,38 @@ Array.prototype.shuffle = function(n) { 	// fonction qui mélange un tableau au 
      }
 };
 
-function afficheMenu() {
+function afficheMenuTest() {
+
+	$("#contenu-gauche").html('');
+
+	$("#contenu-droit").html('');
+
+	$("#feedback").html('');
+
+	$("#mode").html('');
 
 	$('#menu').html('<caption id="caption">Syllabes</caption>');
 
 
 
-if ($.cookie('notesLecture') != null) { // si le cookie notesLecture existe
+if ($.cookie('notesDictee') != null) { // si le cookie notesDictee existe
 	
-	 notesLecture = $.cookie('notesLecture');
+	 notesDictee = $.cookie('notesDictee');
 
-	notesLecture = $.evalJSON( notesLecture );
+//	alert(notesDictee);
+
+	notesDictee = $.evalJSON( notesDictee );
+//	alert(notesDictee);
 }
 else {
 
-	 notesLecture = [];
+	 notesDictee = [];
 
-	l = tableau.length * 3;
+	l = tableau.length;
 
 	for (i = 0; i < l; i++) {	// boucle qui remplit la variable notes
 	
-		notesLecture.push([null,null]);
+		notesDictee.push([null,null]);
 	}
 
 			
@@ -223,31 +239,23 @@ else {
 	for (var i = 0; i < tableau.length; i++) {
 		y = i+1	;
 
-		$('#menu').append('<tr><td colspan="2" class="serie">Série ' + y + '</td></tr>');
 
-
-		for (var l=0; l<3; l++) {		
-
-		if (notesLecture[z][0] == null) {
+		if (notesDictee[z][0] == null) {
 			n = '';
 			couleur = '';	
 		}
 		else {
-			couleur = notesLecture[z][1];	
-			n = notesLecture[z][0] + '/10';
+			couleur = notesDictee[z][1];	
+			n = notesDictee[z][0] + '/10';
 		}
-	
-
-			if (l==0) { ecriture = "majuscule";}
-			if (l==1) { ecriture = "attaché";}
-			if (l==2) { ecriture = "script";}
 
 	
-		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '"><span>' + ecriture + '</span> ' + y + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
+
+	
+		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">Série ' + y + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
 		
 		z++;
 
-		}
 
 
 	}
@@ -262,22 +270,12 @@ $(".item_menu").click(function(event) {		// écoute l'événement click sur les 
 	numero = $(this).index('.item_menu');
 
  
-decide();
-});
-
-$('.serie').click(function() { // écoute l'événement click sur les séries et déclenche toggle : affiche ou cache
-
-    var num = $(this).parent('tr').index();
-	
-    var nu = num + 4;
-	
-    $('tr:lt('+nu+'):gt('+num+')').toggle('slow');
+decideTest();
 });
 
 }
 
-function decide() {
-
+function decideTest() {
 	if (j == 0) { 		// on vient de cliquer sur une série : initialisation de la série
 
 		serie = tableau[rel][1];
@@ -285,16 +283,14 @@ function decide() {
 		mot = j;
 
 		j++;
+
+		score = 0;
 		
 		nb_essais = 0;
 
-		mot_a_cliquer = tableau[rel][3][mot];
+		motAEcrire = tableau[rel][3][mot];
 
-		mots_aleatoire = tableau[rel][2].slice();	 // on duplique les mots humains de la séries rel
-
-		mots_aleatoire.shuffle();  	 // on mélange le tableau de manière aléatoire
-
-		afficheContenant(rel,mot);
+		afficheContenantTest();
 	}
 	else if (j > nb_items) { 	// dernier item de la série
 
@@ -318,20 +314,21 @@ function decide() {
 		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
 		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
 
-		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' syllabes. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour écrire les ' + nb_items + ' syllabes. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
 		
 		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
 
-		if (notesLecture[numero][0] == null || notesLecture[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+
+		if (notesDictee[numero][0] == null || notesDictee[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
 
 
-			notesLecture[numero][0] = note;
-			notesLecture[numero][1] = image;
+			notesDictee[numero][0] = note;
+			notesDictee[numero][1] = image;
 
-			notesLectureEncodeesEnJSON = $.toJSON( notesLecture ); // encodage en JSON du tableau de notes
+			notesDicteeEncodeesEnJSON = $.toJSON( notesDictee ); // encodage en JSON du tableau de notes
 	
 								// on écrit le cookie avec la meilleure note
-			$.cookie('notesLecture', notesLectureEncodeesEnJSON) ;
+			$.cookie('notesDictee', notesDicteeEncodeesEnJSON) ;
 
 				// mise à jour de la note
 
@@ -345,18 +342,16 @@ function decide() {
 
 	}
 	else {		// entre les deux
-		mot_a_cliquer = tableau[rel][3][mot];
-		afficheContenant(rel,mot);
+		motAEcrire = tableau[rel][3][mot];
+		afficheContenantTest();
 	}	
 
 
 }
 
 
-function afficheContenant(rel,mot) {
+function afficheContenantTest() {
 
-
-if (ecriture == "attaché") { ecriture = "attache"; }
 
 	$("#contenu-gauche").html('');
 
@@ -375,44 +370,51 @@ if (ecriture == "attaché") { ecriture = "attache"; }
 	$("#jquery_jplayer_1").jPlayer({ // code Jplayer JavaScript
 		ready: function (event) {
 			$(this).jPlayer("setMedia", {
-				oga:'sons/' + serie + '/' + mot_a_cliquer + '.ogg'
+				oga:'sons/' + serie + '/' + motAEcrire + '.ogg'
 			});
 			  $(this).jPlayer("play"); // permet de jouer directement le son (autoplay)
 		},
 		supplied: "oga"
 	});
 
+	$("#contenu-droit").append('<form id="formulaire" autocomplete="off"><p class="paragraphe" rel="' + mot + '"> <input type="text" id="motEcrit" name="motEcrit" size="1" maxlength="10" /><input id="soumettre" type="submit" value="OK" /><span class="message"></span></p></form>');
+	$('#motEcrit').focus();	
 
-	for (var i = 0; i < mots_aleatoire.length; i++) {	// boucle qui affiche mots_aleatoire
-	
-		$("#contenu-droit").append('<a href="#" class="mot">' + mots_aleatoire[i] + '</a><br />');
-	}
 
-	$(".mot").click(function(event) {	 // écoute l'événement click sur les mots et déclenche la fonction verifie();
-    	
-		// $(this).css("background-color","yellow");
-		verifie($(this).text());
+	$('#formulaire').submit(function() {
+
+		motEcrit = $('#motEcrit').val(); // récupère la valeur de l'input
+		motEcrit = $.trim(motEcrit);  // enlève les espaces avant et après le texte	
+		motEcrit = motEcrit.toLowerCase(); // transforme l'entrée en minuscule
+		verifieTest();
+
+		
+
 	});
 
 
 }
 
-function verifie(mot_clique) {
-
+function verifieTest() {
 	nb_essais++;
+	//	alert('motEcrit : ' + motEcrit + ' mot à écrire : ' + motAEcrire + ' score : ' + score);
 	
-	if (mot_clique == mot_a_cliquer) {
+		if (motEcrit == motAEcrire) {
+
+		score++ ;
+
 		j++;	
 		mot++;
 		$("#feedback").html('');
 		$("#feedback").html('<span class="reussi">Tu as réussi !</span>');
 		$(".reussi").animate({ boxShadow:"6px 6px 6px black"}, 1000);
-		
-		decide();
+		decideTest();
 
 	}
 	else {
-		$("#feedback").html('Tu as cliqué sur <span class="erreur ' + ecriture + ' petit">' + mot_clique + '</span> Tu devais cliquer sur <span class="juste '+ecriture+' petit">' + mot_a_cliquer + '</span>');
+
+
+		$("#feedback").html('Tu as écrit <span class="erreur">' + motEcrit + '</span> Tu devais écrire <span class="juste">' + motAEcrire + '</span>');
 	
 		$("#lien").html('<a href="#" class="recommence">Recommence</a>');
 		
@@ -420,7 +422,7 @@ function verifie(mot_clique) {
 
 		$(".recommence").click(function(event) {		// écoute l'événement click sur le lien recommence;
 			$("#feedback").html('');
-			decide();
+			decideTest();
 		});
 
 		$("#contenu-gauche").html('');
@@ -771,7 +773,8 @@ tableau = [	 // ouverture niveau 0
 
 
 
-afficheMenu();
+
+afficheMenuTest();
 
 
 

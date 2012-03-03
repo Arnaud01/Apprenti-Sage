@@ -1,5 +1,5 @@
 
-<!--
+/*
 Copyright (C) 2012 Arnaud Limon
 
 English
@@ -34,72 +34,104 @@ Français
     Vous devez avoir reçu une copie de la GNU Affero General Public License
     avec Apprenti-Sage. Si ce n'est pas le cas, consultez
     <http://www.gnu.org/licenses/> 
--->
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Apprenti-Sage - Accueil CP</title>
- <link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
-<style>
+*/
 
-#prenom {
-font-size:1.3em;
+/* styles du logiciel Apprenti Sage
+
+la police cursive est dérivée de gino, ( Jean-Claude Gineau ) modifiée par Antoine Fetet, le $ permet d'enlever le jambage du s.
+
+source : http://ecoles.ac-rouen.fr/aubin-epinay/ressources.html
+*/
+
+
+#partie-gauche {
+width:48%;
+float:left;
 }
 
-.prenom {
-margin:20px;
+#partie-droite {
+width:48%;
+float:left;
 }
 
-</style>
-</head>
-
-    <body>
-
-<form action="lecture.html" autocomplete="off">
-<p class="prenom">
-
-	<label for="prenom">Ecris ton prénom : </label>
-
-	<input type="text" name="prenom" id="prenom" placeholder="Prénom" size="7" maxlength="20" autofocus required />
-	<input type="submit" value="Entrer" id="valider" />
-</p>
-</form>
+@font-face {
+font-family: 'cursiveff';
+src: url('polices/cursive.ttf');
+}
 
 
-<script type="text/javascript" src="js/jquery.js"></script> 
-<script src="js/jquery.cookie.js"></script>   
-<script type="text/javascript">
+aside {
+max-width:200px;
+height:500px;
+overflow:auto;
+margin-top:40px;
+padding-top:"-20px";
+padding-bottom:40px;
+}
+
+#centrale {
+display:inline-block;
+vertical-align:top;
+/*border:3px solid blue;*/
+width:68%;
+min-width:710px;
+}
 
 
-$(function(){
-						
-	$.cookie('notesLecture', null);		
-	$.cookie('notesLectureNombres', null);		
-	$.cookie('notesLectureMots', null);		
-	$.cookie('notesLectureLettres', null);		
-	$.cookie('notesDicteeNombres', null);		
-	$.cookie('notesDicteeMots', null);		
-	$.cookie('notesMaths', null);		
-	$.cookie('notesDictee', null);		
-	$.cookie('notesDicteeLettres', null);		
-	$.cookie('notesPhrase', null);		
-	$.cookie('notesRanger', null);		
-	$.cookie('notesAdditions', null);		
-	$.cookie('notesSoustractions', null);		
-	$.cookie('notesDivers', null);		
+#contenu-droit {
 
-	$("form").submit(function() {
+}
 
-		var prenom_entre = $("#prenom").val();
-
-		$.cookie('prenom', prenom_entre);
-
-	});
-
-});
+.reussi, .bilan {
+border:1px solid black;
+background-color:aqua;
+}
 
 
-</script>
-    </body>
-</html>
+.serie {
+cursor:pointer;
+background-color:orange;
+
+}
+
+.juste {
+background-color: white;
+padding: 10px;
+margin: 0 10px;
+border: black solid 1px;
+font-size:2em;
+}
+
+.erreur {
+background-color: silver;
+padding: 10px;
+margin: 0 10px;
+border:black solid 1px;
+font-size:2em;
+}
+
+
+
+.majuscule {
+font-size: 3em;
+font-family:arial,serif;
+text-transform: uppercase;  
+line-height:1.5em;
+}
+
+.script {
+font-size: 3em;
+font-family:arial,serif;
+line-height:1.5em;
+}
+
+.attache {
+font-family:cursiveff;
+font-size: 4em;
+line-height:1.5em;
+}
+
+.petit {
+font-size:2em;
+line-height:1em;
+}

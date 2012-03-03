@@ -39,13 +39,14 @@ Français
 <html>
 <head>
         <meta charset="utf-8" />
-        <title>Apprenti-Sage - Dictée de mots</title>
+        <title>Apprenti-Sage - Dictée de syllabes</title>
 	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
-	<link rel="stylesheet" media="screen" type="text/css" title="design" href="dictee-mots.css" />
+	<link rel="stylesheet" media="screen" type="text/css" title="design" href="dictee.css" />
 	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
+
 
 <nav>
 <ul>
@@ -60,7 +61,8 @@ Français
 	</li>
 	<li class="actuel"><a href="dictee.html">Dictée</a>
 		<ul>
-			<li><a href="dictee.html">Syllabes</a></li><li><a href="dictee-lettres.html">Lettres</a></li>
+			<li><a href="dictee.html">Syllabes</a></li>
+			<li><a href="dictee-lettres.html">Lettres</a></li>
 			<li><a href="dictee-mots.html">Mots</a></li>
 			
 		</ul>
@@ -107,7 +109,7 @@ Français
 
 
 
-	<div id="consigne">Clique sur une série de mots dans le menu.</div>
+	<div id="consigne">Clique sur une série de lettres dans le menu.</div>
 	<div id="feedback"></div>
 	<div id="lien"></div>
 </header>
@@ -139,9 +141,11 @@ $(function(){ // début jQuery
 
 // déclaration de variables globales
 
-var notesDicteeMots;
+var notesDicteeLettres;
 
-var notesDicteeMotsEncodeesEnJSON;
+var notesDicteeLettresEncodeesEnJSON;
+
+var ecriture;
 
 var j;
 
@@ -163,9 +167,7 @@ var tableau;
 
 var motEcrit;
 
-var motAEcrire_humain;
-
-var motAEcrire_informatique;
+var motAEcrire;
 
 var score;
 
@@ -206,25 +208,31 @@ function afficheMenuTest() {
 
 	$("#mode").html('');
 
-	$('#menu').html('<caption id="caption">Mots</caption>');
+	$('#menu').html('<caption id="caption">Lettres</caption>');
 
 
 
-if ($.cookie('notesDicteeMots') != null) { // si le cookie notesDicteeMots existe
+if ($.cookie('notesDicteeLettres') != null) { // si le cookie notesDicteeLettres existe
 	
-	 notesDicteeMots = $.cookie('notesDicteeMots');
+	 notesDicteeLettres = $.cookie('notesDicteeLettres');
 
+//	alert(notesDicteeLettres);
 
-	notesDicteeMots = $.evalJSON( notesDicteeMots );
+	notesDicteeLettres = $.evalJSON( notesDicteeLettres );
+//	alert(notesDicteeLettres);
 }
 else {
-	 notesDicteeMots = [];
-			
 
-	for (var i = 0; i < tableau.length; i++) {	// boucle qui remplit la variable notes
+	 notesDicteeLettres = [];
+
+	l = tableau.length;
+
+	for (i = 0; i < l; i++) {	// boucle qui remplit la variable notes
 	
-		notesDicteeMots.push([null,null]);
+		notesDicteeLettres.push([null,null]);
 	}
+
+			
 }
 	z=0;	
 
@@ -232,19 +240,20 @@ else {
 		y = i+1	;
 
 
-		if (notesDicteeMots[z][0] == null) {
+		if (notesDicteeLettres[z][0] == null) {
 			n = '';
 			couleur = '';	
 		}
 		else {
-			couleur = notesDicteeMots[z][1];	
-			n = notesDicteeMots[z][0] + '/10';
+			couleur = notesDicteeLettres[z][1];	
+			n = notesDicteeLettres[z][0] + '/10';
 		}
 
 	
 
-		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">' + tableau[i][0] + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
 	
+		$('#menu').append('<tr><td><a href="#" class="item_menu" rel="' + i + '">Série ' + y + '</a></td><td class="note ' + couleur + '">' + n + '</td></tr>');
+		
 		z++;
 
 
@@ -255,6 +264,7 @@ $(".item_menu").click(function(event) {		// écoute l'événement click sur les 
 	j = 0;	
 	$("#feedback").html('');
 	rel = parseInt($(this).attr("rel"));
+	ecriture = $(this).find("span").text();
 
 	nb_items = tableau[rel][3].length;
 	numero = $(this).index('.item_menu');
@@ -278,9 +288,7 @@ function decideTest() {
 		
 		nb_essais = 0;
 
-		motAEcrire_informatique = tableau[rel][3][mot];
-		
-		motAEcrire_humain = tableau[rel][2][mot];
+		motAEcrire = tableau[rel][3][mot];
 
 		afficheContenantTest();
 	}
@@ -306,21 +314,21 @@ function decideTest() {
 		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
 		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
 
-		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour écrire les ' + nb_items + ' mots. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour écrire les ' + nb_items + ' syllabes. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
 		
 		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
 
 
-		if (notesDicteeMots[numero][0] == null || notesDicteeMots[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
+		if (notesDicteeLettres[numero][0] == null || notesDicteeLettres[numero][0] < note) { // si la note est null ou si elle est inférieure à la nouvelle
 
 
-			notesDicteeMots[numero][0] = note;
-			notesDicteeMots[numero][1] = image;
+			notesDicteeLettres[numero][0] = note;
+			notesDicteeLettres[numero][1] = image;
 
-			notesDicteeMotsEncodeesEnJSON = $.toJSON( notesDicteeMots ); // encodage en JSON du tableau de notes
+			notesDicteeLettresEncodeesEnJSON = $.toJSON( notesDicteeLettres ); // encodage en JSON du tableau de notes
 	
 								// on écrit le cookie avec la meilleure note
-			$.cookie('notesDicteeMots', notesDicteeMotsEncodeesEnJSON) ;
+			$.cookie('notesDicteeLettres', notesDicteeLettresEncodeesEnJSON) ;
 
 				// mise à jour de la note
 
@@ -334,8 +342,7 @@ function decideTest() {
 
 	}
 	else {		// entre les deux
-		motAEcrire_informatique = tableau[rel][3][mot];
-		motAEcrire_humain = tableau[rel][2][mot];
+		motAEcrire = tableau[rel][3][mot];
 		afficheContenantTest();
 	}	
 
@@ -350,6 +357,10 @@ function afficheContenantTest() {
 
 	$("#contenu-droit").html('');
 
+	$("#contenu-droit").removeClass("attache script majuscule");
+	
+	$("#contenu-droit").addClass(ecriture);
+
 	$("#consigne").html('');
 
 	$("#lien").html('');
@@ -359,21 +370,22 @@ function afficheContenantTest() {
 	$("#jquery_jplayer_1").jPlayer({ // code Jplayer JavaScript
 		ready: function (event) {
 			$(this).jPlayer("setMedia", {
-				oga:'sons/' + serie + '/' + motAEcrire_informatique + '.ogg'
+				oga:'sons/' + serie + '/' + motAEcrire + '.ogg'
 			});
 			  $(this).jPlayer("play"); // permet de jouer directement le son (autoplay)
 		},
 		supplied: "oga"
 	});
 
-	$("#contenu-droit").append('<form id="formulaire" autocomplete="off"><p class="paragraphe" rel="' + mot + '"> <input type="text" id="motEcrit" name="motEcrit" size="1" maxlength="20" /><input id="soumettre" type="submit" value="Valider" /><span class="message"></span></p></form>');
+	$("#contenu-droit").append('<form id="formulaire" autocomplete="off"><p class="paragraphe" rel="' + mot + '"> <input type="text" id="motEcrit" name="motEcrit" size="1" maxlength="10" /><input id="soumettre" type="submit" value="OK" /><span class="message"></span></p></form>');
 	$('#motEcrit').focus();	
 
 
 	$('#formulaire').submit(function() {
 
-		motEcrit = $('#motEcrit').val();
-		
+		motEcrit = $('#motEcrit').val(); // récupère la valeur de l'input
+		motEcrit = $.trim(motEcrit);  // enlève les espaces avant et après le texte	
+		motEcrit = motEcrit.toLowerCase(); // transforme l'entrée en minuscule
 		verifieTest();
 
 		
@@ -385,8 +397,9 @@ function afficheContenantTest() {
 
 function verifieTest() {
 	nb_essais++;
+	//	alert('motEcrit : ' + motEcrit + ' mot à écrire : ' + motAEcrire + ' score : ' + score);
 	
-		if (motEcrit == motAEcrire_humain) {
+		if (motEcrit == motAEcrire) {
 
 		score++ ;
 
@@ -401,7 +414,7 @@ function verifieTest() {
 	else {
 
 
-		$("#feedback").html('Tu as écrit <span class="erreur">' + motEcrit + '</span> Tu devais écrire <span class="juste">' + motAEcrire_humain + '</span>');
+		$("#feedback").html('Tu as écrit <span class="erreur">' + motEcrit + '</span> Tu devais écrire <span class="juste">' + motAEcrire + '</span>');
 	
 		$("#lien").html('<a href="#" class="recommence">Recommence</a>');
 		
@@ -422,125 +435,52 @@ function verifieTest() {
 tableau = [	 // ouverture niveau 0
 			[				 // ouverture niveau 1
 
-				"Série 1",
-				'famille',
-				 ['papa','maman'],	 // niveau 2
-				 ['papa','maman'],	 // niveau 2
+				"1",
+				'lettres',
+				 ['r','a','i','m','l','o'],	 // niveau 2
+				 ['r','a','i','m','l','o']	 // niveau 2
 			],				// fermeture niveau 1
 	
 			[				 // ouverture niveau 1
 
-				"Série 2",
-				'mots',
-				  ['le','la','les','un','une','des'],	 // niveau 2
-				  ['le','la','les','un','une','des'],	 // niveau 2
+				"2",
+				'lettres',
+				  ['u','v','j','f','c','h'],	 // niveau 2
+				  ['u','v','j','f','c','h']	 // niveau 2
 			],				// fermeture niveau 1
 	
 			[				 // ouverture niveau 1
 
-				"Série 3",
-				'mots',
-				  ['je','tu','il','elle','on','nous','vous'],  // niveau 2
-				  ['je','tu','il','elle','on','nous','vous'],  // niveau 2
-			],				// fermeture niveau 1
-
-
-			[				 // ouverture niveau 1
-
-				"Série 4",
-				'mots',
-				  ["c'est",'dans','avec','mais','ne','pas'],  // niveau 2
-				  ["cest",'dans','avec','mais','ne','pas'],  // niveau 2
-			],				// fermeture niveau 1
-							
-			[				 // ouverture niveau 1
-
-				"Série 5",
-				'mots',
-				  ['de','à','sur','est','pour','que'],  // niveau 2
-				  ['de','a','sur','est','pour','que'],  // niveau 2
-			],				// fermeture niveau 1
-
-
-
-			[				 // ouverture niveau 1
-
-				"Série 6",
-				'mots',
-				  ['se','son','sa','ses','et','qui'],  // niveau 2
-				  ['ce','son','sa','ses','et','qui'],  // niveau 2
+				"3",
+				'lettres',
+				  ['s','e','n','b','d','p','t'],  // niveau 2
+				  ['s','e','n','b','d','p','t']  // niveau 2
 			],				// fermeture niveau 1
 
 			[				 // ouverture niveau 1
 
-				"Jours de la semaine",
-				'jours_semaine',
-				  ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],  // niveau 2
-				  ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],  // niveau 2
+				"4",
+				'lettres',
+				  ['g','k','q','w','x','y','z'],  // niveau 2
+				  ['g','k','q','w','x','y','z']  // niveau 2
+			],
+			[				 // ouverture niveau 1
+
+				"5",
+				'lettres',
+				 ['r','a','i','m','l','o','s','e','n','b','d','p','t'],	 // niveau 2
+				 ['r','a','i','m','l','o','s','e','n','b','d','p','t']	 // niveau 2
 			],				// fermeture niveau 1
 			[				 // ouverture niveau 1
 
-				"Série 7",
-				'mots',
-				  ['où','là','lui','puis','oui','non'],  // niveau 2
-				  ['ou','la','lui','puis','oui','non'],  // niveau 2
-			],				// fermeture niveau 1
+				"6",
+				'lettres',
+				  ['u','v','j','f','c','h','g','k','q','w','x','y','z'],	 // niveau 2
+				  ['u','v','j','f','c','h','g','k','q','w','x','y','z']	 // niveau 2
+			],
 
-			[				 // ouverture niveau 1
-
-				"Série 8",
-				'mots',
-				  ['ce','en','du','au','par','plus'],  // niveau 2
-				  ['ce','en','du','au','par','plu'],  // niveau 2
-			],				// fermeture niveau 1
-
-			[				 // ouverture niveau 1
-
-				"Série 9",
-				'mots',
-				  ['mon','ma','mes','notre','votre','leur'],  // niveau 2
-				  ['mon','ma','mes','notre','votre','leur'],  // niveau 2
-			],				// fermeture niveau 1
-
-			[				 // ouverture niveau 1
-
-				"Série 10",
-				'mots',
-				  ['comme','tout','bien','sans','me'],  // niveau 2
-				  ['comme','tout','bien','sans','me'],  // niveau 2
-			],				// fermeture niveau 1
-			[				 // ouverture niveau 1
-
-				"Chiffres",
-				'chiffres',
-				 ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf'],	 // niveau 2
-				 ['zero','un','deux','trois','quatre','cinq','six','sept','huit','neuf']	 // niveau 2
-			],				// fermeture niveau 1
-			[				 // ouverture niveau 1
-
-				"Couleurs",
-				'couleurs',
-				 ['rouge','vert','bleu','jaune','blanc','noir','orange','rose','violet'],	 // niveau 2
-				 ['rouge','vert','bleu','jaune','blanc','noir','orange','rose','violet'],	 // niveau 2
-			],				// fermeture niveau 1
-			[				 // ouverture niveau 1
-
-				"Nombres de 10 à 20",
-				'nombres_de_10_a_20',
-				  ['dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf','vingt'],	 // niveau 2
-				  ['dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf','vingt']	 // niveau 2
-			],				// fermeture niveau 1
-	
-			[				 // ouverture niveau 1
-
-				"Dizaines",
-				'dizaines',
-				  ['dix','vingt','trente','quarante','cinquante','soixante','soixante-dix','quatre-vingts','quatre-vingt-dix'],  // niveau 2
-				  ['dix','vingt','trente','quarante','cinquante','soixante','soixante-dix','quatre-vingts','quatre-vingt-dix']  // niveau 2
-			],				// fermeture niveau 1
-
-							
 ];	// fermeture niveau 0	
+
 
 
 afficheMenuTest();
