@@ -39,7 +39,7 @@ Français
 <html>
 <head>
         <meta charset="utf-8" />
-        <title>Apprenti-Sage - Lecture de syllabes 1</title>
+        <title>Apprenti-Sage - Lecture de lettres</title>
 	<link rel="stylesheet" media="screen" type="text/css" title="design" href="styles.css" />
 	<link rel="stylesheet" media="screen" type="text/css" title="design" href="lecture-lettres.css" />
 	<link href="skin/pink.flag/jplayer.pink.flag.css" rel="stylesheet" type="text/css" />
@@ -318,7 +318,7 @@ function decide() {
 		else if (nb_essais <= 3.25 * nb_items) { message = 'Insuffisant'; note = 1; image = 'rouge'; }
 		else { message = 'Insuffisant'; note = 0; image = 'rouge'; }
 
-		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' syllabes. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
+		$("#feedback").html('<span class="bilan">Bilan : tu as fait ' + nb_erreurs + ' erreur' + s + ' pour lire les ' + nb_items + ' lettres. ' + message + ' ' + note + '/10 <img id="couleur" src="images/' + image + '.png" alt="" /></span>');
 		
 		$(".bilan").animate({ boxShadow:"6px 6px 6px black"}, 1000);
 
