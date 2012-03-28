@@ -1,4 +1,3 @@
-
 <!--
 Copyright (C) 2012 Arnaud Limon
 
@@ -421,7 +420,7 @@ function afficheContenantTest() {
 
 	if (verbes[numeroDuVerbe][1] && j==0) { pronom = "j'";} // si verbes... = true et si 1ère pers sing
 	
-	$("#contenu-gauche").append('<form id="formulaire" autocomplete="off"><p class="conjugue" rel="' + verbes[numeroDuVerbe][2][j] + '">' + pronom + ' <input type="text" id="motEcrit" name="motEcrit" size="6" maxlength="10" /><input id="soumettre" type="submit" value="OK" /><span class="message"></span></p></form>');
+	$("#contenu-gauche").append('<form id="formulaire" autocomplete="off"><p class="conjugue" rel="' + verbes[numeroDuVerbe][2][j] + '">' + pronom + ' <input type="text" id="motEcrit" name="motEcrit" size="6" maxlength="15" /><input id="soumettre" type="submit" value="OK" /><span class="message"></span></p></form>');
 	$('#motEcrit').focus();	
 
 	j++;
